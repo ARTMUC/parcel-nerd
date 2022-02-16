@@ -15,9 +15,14 @@ import { UpdateParcelDto } from './dto/update-parcel.dto';
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
-  @Get(':x,:y')
-  getParcelsIds(@Param('x') x: string, @Param('y') y: string) {
-    return this.parcelsService.getParcelsIds(x, y);
+  @Get(':x,:y,:x2,:y2')
+  getParcelsIds(
+    @Param('x') x: string,
+    @Param('y') y: string,
+    @Param('x2') x2: string,
+    @Param('y2') y2: string,
+  ) {
+    return this.parcelsService.getParcelsIds(x, y, x2, y2);
   }
 
   // @Post()

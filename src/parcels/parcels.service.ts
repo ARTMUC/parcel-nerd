@@ -1,39 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import * as parse from 'xml-parser';
-import { map, Observable } from 'rxjs';
 import fetch from 'node-fetch';
-import { receiveMessageOnPort } from 'worker_threads';
+import * as Bluebird from 'bluebird';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 
 @Injectable()
 export class ParcelsService {
-  constructor() {}
+  async getParcelsIds(
+    x: string,
+    y: string,
+    x2: string,
+    y2: string,
+  ): Promise<any> {
+    const coordinates = [
+      { x, y },
+      { x: x2, y: y2 },
+    ];
+    // for (let i = 0; i < 1000; i++) {
+    //   coordinates.push({ x, y });
+    // } // mock
 
-  async getParcelsIds(x: string, y: string): Promise<any> {
-    const coordinates = [];
-    for (let i = 0; i < 500; i++) {
-      coordinates.push({ x, y });
-    }
-
-    const requests = coordinates.map(async (el, i) => {
-      const { x, y } = el;
-      const resp = await fetch(
-        `https://polska.geoportal2.pl/map/wmsgfi/gfiproxy.php?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetFeatureInfo&LAYERS=dzialki,geoportal&STYLES=,&FORMAT=image/png&BBOX=${x},${y},${x},${y}&WIDTH=612&HEIGHT=614&CRS=EPSG:2180&FEATURE_COUNT=50&QUERY_LAYERS=dzialki,geoportal&INFO_FORMAT==190&J=188`,
-      );
-      const text = await resp.text();
-      const parsed = parse(text);
-      const data = parsed.root.children[0].children[0].children;
-
-      const parcelInfo = Object.fromEntries(
-        data.map((el) => [el.attributes.Name, el.content]),
-      );
-
-      return parcelInfo;
+    return await Bluebird.map(coordinates, this.getParcelInfoForEl, {
+      concurrency: 200,
     });
-    const results = await Promise.all(requests);
+  }
 
-    return await results;
+  private async getParcelInfoForEl(element, i) {
+    const { x, y } = element;
+    const urlFirstPart =
+      'https://polska.geoportal2.pl/map/wmsgfi/gfiproxy.php?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetFeatureInfo&LAYERS=dzialki,geoportal&STYLES=,&FORMAT=image/png&BBOX=';
+    const urlSecondPart =
+      '&WIDTH=612&HEIGHT=614&CRS=EPSG:2180&FEATURE_COUNT=50&QUERY_LAYERS=dzialki,geoportal&INFO_FORMAT==190&J=188';
+    const resp = await fetch(
+      `${urlFirstPart}${x},${y},${x},${y}${urlSecondPart}`,
+    );
+    const parsedData = parse(await resp.text()).root.children[0].children[0]
+      .children;
+
+    const parcelInfo = Object.fromEntries(
+      parsedData.map((el) => [el.attributes.Name, el.content]),
+    );
+    parcelInfo.coordinates = { x, y };
+    parcelInfo.index = i + 1;
+    return parcelInfo;
   }
 
   // create(createParcelDto: CreateParcelDto) {
