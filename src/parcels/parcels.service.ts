@@ -1,49 +1,37 @@
 import { Injectable } from '@nestjs/common';
+
 import * as parse from 'xml-parser';
 import fetch from 'node-fetch';
 import * as Bluebird from 'bluebird';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
+import { Coordinates } from './interfaces/coordinates.interface';
+import { ParcelInfo } from './interfaces/parcel-info.interface';
+import { CoordinatesService } from './coordinates.service';
+import { ParcelId } from './interfaces/parcelId.interface';
 
 @Injectable()
 export class ParcelsService {
-  async getParcelsIds(
-    x: string,
-    y: string,
-    x2: string,
-    y2: string,
-  ): Promise<any> {
-    const coordinates = [
-      { x, y },
-      { x: x2, y: y2 },
-    ];
-    // for (let i = 0; i < 1000; i++) {
-    //   coordinates.push({ x, y });
-    // } // mock
-
-    return await Bluebird.map(coordinates, this.getParcelInfoForEl, {
-      concurrency: 200,
-    });
+  constructor(private readonly coordService: CoordinatesService) {}
+  async getParcelsIds(coordinatesArr: Coordinates[]): Promise<ParcelInfo[]> {
+    const results: ParcelInfo[] = await Bluebird.map(
+      this.coordService.splitLines(coordinatesArr),
+      this.coordService.getParcelInfoForEl,
+      {
+        concurrency: 50,
+      },
+    );
+    return this.coordService.removeDuplicates(results);
   }
 
-  private async getParcelInfoForEl(element, i) {
-    const { x, y } = element;
-    const urlFirstPart =
-      'https://polska.geoportal2.pl/map/wmsgfi/gfiproxy.php?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetFeatureInfo&LAYERS=dzialki,geoportal&STYLES=,&FORMAT=image/png&BBOX=';
-    const urlSecondPart =
-      '&WIDTH=612&HEIGHT=614&CRS=EPSG:2180&FEATURE_COUNT=50&QUERY_LAYERS=dzialki,geoportal&INFO_FORMAT==190&J=188';
-    const resp = await fetch(
-      `${urlFirstPart}${x},${y},${x},${y}${urlSecondPart}`,
+  async getParcelsBouds(parcelIdArr: ParcelId[]) {
+    return await Bluebird.map(
+      parcelIdArr,
+      this.coordService.getParcelCoordinates,
+      {
+        concurrency: 10,
+      },
     );
-    const parsedData = parse(await resp.text()).root.children[0].children[0]
-      .children;
-
-    const parcelInfo = Object.fromEntries(
-      parsedData.map((el) => [el.attributes.Name, el.content]),
-    );
-    parcelInfo.coordinates = { x, y };
-    parcelInfo.index = i + 1;
-    return parcelInfo;
   }
 
   // create(createParcelDto: CreateParcelDto) {
