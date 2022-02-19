@@ -12,7 +12,7 @@ import { ParcelId } from './interfaces/parcelId.interface';
 
 @Injectable()
 export class ParcelsService {
-  constructor(private readonly coordService: CoordinatesService) {}
+  constructor(private coordService: CoordinatesService) {}
   async getParcelsIds(coordinatesArr: Coordinates[]): Promise<ParcelInfo[]> {
     const results: ParcelInfo[] = await Bluebird.map(
       this.coordService.splitLines(coordinatesArr),
