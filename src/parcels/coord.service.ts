@@ -10,7 +10,7 @@ import { ParcelInfo } from './interfaces/parcel-info.interface';
 import { ParcelId } from './interfaces/parcelId.interface';
 
 @Injectable()
-export class CoordinatesService {
+export class CoordService {
   removeDuplicates(results: ParcelInfo[]) {
     const uniqueResults = results.filter(
       (value, index, self) =>
@@ -26,6 +26,7 @@ export class CoordinatesService {
       };
     });
   }
+
   splitLines(coordinatesArr: Coordinates[]): Coordinates[] {
     const getLineLength = (x1: number, y1: number, x2: number, y2: number) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -47,6 +48,7 @@ export class CoordinatesService {
     });
     return newCoordinatesArr;
   }
+
   async getParcelInfoForEl(element) {
     const { x, y } = element;
     const urlFirstPart = process.env.URL_FIRST_PART;
@@ -64,7 +66,13 @@ export class CoordinatesService {
     parcelInfo.coordinates = { x, y };
     return parcelInfo;
   }
+
+  print() {
+    console.log('xxxxxxxxxxxxxxx');
+  }
+
   async getParcelCoordinates(parcelId: ParcelId) {
+    this.print();
     const url = process.env.URL_BOUNDS;
     proj4.defs([
       [
@@ -88,6 +96,7 @@ export class CoordinatesService {
       const converted = proj4('EPSG:2180', 'EPSG:4326').forward(coordinates);
       return [converted[1], converted[0]];
     });
+
     return convertedData;
   }
 }

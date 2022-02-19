@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-
-import * as parse from 'xml-parser';
-import fetch from 'node-fetch';
 import * as Bluebird from 'bluebird';
-import { CreateParcelDto } from './dto/create-parcel.dto';
-import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { Coordinates } from './interfaces/coordinates.interface';
 import { ParcelInfo } from './interfaces/parcel-info.interface';
-import { CoordinatesService } from './coordinates.service';
 import { ParcelId } from './interfaces/parcelId.interface';
+import { CoordService } from './coord.service';
 
 @Injectable()
 export class ParcelsService {
-  constructor(private coordService: CoordinatesService) {}
+  constructor(private coordService: CoordService) {}
   async getParcelsIds(coordinatesArr: Coordinates[]): Promise<ParcelInfo[]> {
     const results: ParcelInfo[] = await Bluebird.map(
       this.coordService.splitLines(coordinatesArr),
@@ -25,6 +20,7 @@ export class ParcelsService {
   }
 
   async getParcelsBouds(parcelIdArr: ParcelId[]) {
+    // this.print();
     return await Bluebird.map(
       parcelIdArr,
       this.coordService.getParcelCoordinates,
@@ -33,7 +29,9 @@ export class ParcelsService {
       },
     );
   }
-
+  // print() {
+  //   console.log('xxxxxxxxxxxxxxx');
+  // }
   // create(createParcelDto: CreateParcelDto) {
   //   return 'This action adds a new parcel';
   // }
