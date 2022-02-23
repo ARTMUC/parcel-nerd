@@ -1,32 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import * as Bluebird from 'bluebird';
-import { Coordinates } from './interfaces/coordinates.interface';
+import { LineCoordinates } from './interfaces/line-coordinates.type';
 import { ParcelInfo } from './interfaces/parcel-info.interface';
-import { ParcelId } from './interfaces/parcelId.interface';
+import { ParcelId } from './interfaces/parcelId.type';
 import { CoordService } from './coord.service';
+import { ParcelBounds } from './interfaces/parcel-boundaries.type';
 
 @Injectable()
 export class ParcelsService {
   constructor(private coordService: CoordService) {}
-  async getParcelsIds(coordinatesArr: Coordinates[]): Promise<ParcelInfo[]> {
+  async getParcelsIds(
+    coordinatesArr: LineCoordinates[],
+  ): Promise<ParcelInfo[]> {
     const results: ParcelInfo[] = await Bluebird.map(
       this.coordService.splitLines(coordinatesArr),
       this.coordService.getParcelInfoForEl,
       {
-        concurrency: 50,
+        concurrency: 10,
       },
     );
     return this.coordService.removeDuplicates(results);
   }
 
-  async getParcelsBouds(parcelIdArr: ParcelId[]) {
-    // this.print();
-    return await Bluebird.map(
+  async getParcelsBouds(parcelIdArr: ParcelId[]): Promise<ParcelBounds[]> {
+    const coordinates: ParcelBounds[] = await Bluebird.map(
       parcelIdArr,
       this.coordService.getParcelCoordinates,
       {
         concurrency: 10,
       },
+    );
+    return coordinates.map((parcelCoords) =>
+      this.coordService.convertToDeg(parcelCoords, 'forward'),
     );
   }
   // print() {

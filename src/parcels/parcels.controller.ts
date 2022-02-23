@@ -10,21 +10,29 @@ import {
 import { ParcelsService } from './parcels.service';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
-import { Coordinates } from './interfaces/coordinates.interface';
-import { ParcelId } from './interfaces/parcelId.interface';
+import { LineCoordinates } from './interfaces/line-coordinates.type';
+import { ParcelId } from './interfaces/parcelId.type';
+import { CoordService } from './coord.service';
 
 @Controller('parcels')
 export class ParcelsController {
-  constructor(private readonly parcelsService: ParcelsService) {}
+  constructor(
+    private readonly parcelsService: ParcelsService,
+    private readonly coordService: CoordService,
+  ) {}
 
   @Post('getByCoordinates')
-  getParcelsIds(@Body() coordinatesArr: Coordinates[]) {
+  getParcelsIds(@Body() coordinatesArr: LineCoordinates[]) {
     return this.parcelsService.getParcelsIds(coordinatesArr);
   }
 
   @Post('getBoudsById')
   getParcelBounds(@Body() parcelIdArr: ParcelId[]) {
     return this.parcelsService.getParcelsBouds(parcelIdArr);
+  }
+  @Post('coordsToDeg')
+  converCoordsToDeg(@Body() coordinatesArr: LineCoordinates[]) {
+    return this.coordService.convertToDeg(coordinatesArr, 'forward');
   }
 
   // @Post()

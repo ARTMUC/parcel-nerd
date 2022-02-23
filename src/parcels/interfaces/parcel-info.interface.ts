@@ -1,5 +1,3 @@
-import { Coordinates } from './coordinates.interface';
-
 export interface ParcelInfo {
   'Identyfikator działki': string;
   Województwo: string;
@@ -15,6 +13,5 @@ export interface ParcelInfo {
   'Data publikacji danych': string;
   'Informacje o pochodzeniu danych': string;
   'Informacje dodatkowe o działce': string;
-  coordinates: Coordinates;
   index: number;
 }

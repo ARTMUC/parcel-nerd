@@ -5,9 +5,10 @@ import { Readable } from 'stream';
 import { FormDataEncoder } from 'form-data-encoder';
 import { FormData } from 'formdata-node';
 import * as proj4 from 'proj4';
-import { Coordinates } from './interfaces/coordinates.interface';
+import { LineCoordinates } from './interfaces/line-coordinates.type';
 import { ParcelInfo } from './interfaces/parcel-info.interface';
-import { ParcelId } from './interfaces/parcelId.interface';
+import { ParcelId } from './interfaces/parcelId.type';
+import { ParcelBounds } from './interfaces/parcel-boundaries.type';
 
 @Injectable()
 export class CoordService {
@@ -27,30 +28,30 @@ export class CoordService {
     });
   }
 
-  splitLines(coordinatesArr: Coordinates[]): Coordinates[] {
+  splitLines(coordinatesArr: LineCoordinates[]): LineCoordinates[] {
     const getLineLength = (x1: number, y1: number, x2: number, y2: number) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
     const newCoordinatesArr = [];
     coordinatesArr.forEach((coordinates, index) => {
       if (index === 0) return;
-      const x1 = coordinatesArr[index - 1].x;
-      const y1 = coordinatesArr[index - 1].y;
-      const x2 = coordinates.x;
-      const y2 = coordinates.y;
+      const x1 = coordinatesArr[index - 1][0];
+      const y1 = coordinatesArr[index - 1][1];
+      const x2 = coordinates[0];
+      const y2 = coordinates[1];
       const lineLength = getLineLength(x1, y1, x2, y2);
       const lineDivider = 3;
       for (let index = 0; index < lineLength / lineDivider; index++) {
         const newX = x1 + (index / (lineLength / lineDivider)) * (x2 - x1);
         const newY = y1 + (index / (lineLength / lineDivider)) * (y2 - y1);
-        newCoordinatesArr.push({ x: newX, y: newY });
+        newCoordinatesArr.push([newX, newY]);
       }
     });
     return newCoordinatesArr;
   }
 
-  async getParcelInfoForEl(element) {
-    const { x, y } = element;
+  async getParcelInfoForEl(element: LineCoordinates): Promise<ParcelInfo> {
+    const [x, y] = element;
     const urlFirstPart = process.env.URL_FIRST_PART;
     const urlSecondPart = process.env.URL_SECOND_PART;
     const resp = await fetch(
@@ -60,20 +61,15 @@ export class CoordService {
     const data = await resp.text();
     const parsed = await parse(data);
     const parsedData = parsed.root.children[0].children[0].children;
-    const parcelInfo = Object.fromEntries(
+    return Object.fromEntries(
       parsedData.map((el) => [el.attributes.Name, el.content]),
-    );
-    parcelInfo.coordinates = { x, y };
-    return parcelInfo;
+    ) as ParcelInfo;
   }
 
-  print() {
-    console.log('xxxxxxxxxxxxxxx');
-  }
-
-  async getParcelCoordinates(parcelId: ParcelId) {
-    this.print();
-    const url = process.env.URL_BOUNDS;
+  convertToDeg(
+    data: ParcelBounds | LineCoordinates[],
+    direction: 'forward' | 'invert',
+  ): ParcelBounds {
     proj4.defs([
       [
         'EPSG:2180',
@@ -81,6 +77,26 @@ export class CoordService {
       ],
       ['EPSG:4326', '+proj=longlat +datum=WGS84 +no_defs'],
     ]);
+    return data.map((coordinates) => {
+      switch (direction) {
+        case 'forward': {
+          const flippedCoords = [coordinates[1], coordinates[0]];
+          const convertedCoords = proj4('EPSG:2180', 'EPSG:4326').forward(
+            flippedCoords,
+          );
+          return [convertedCoords[1], convertedCoords[0]];
+        }
+        case 'invert': {
+          const flippedCoords = [coordinates[1], coordinates[0]];
+          return proj4('EPSG:2180', 'EPSG:4326').invert(flippedCoords);
+        }
+      }
+    });
+  }
+
+  async getParcelCoordinates(parcelId: ParcelId): Promise<ParcelBounds> {
+    const url = process.env.URL_BOUNDS;
+
     const form = new FormData();
     form.append('REQUEST', 'GetById');
     form.append('IDDZ', parcelId);
@@ -92,11 +108,7 @@ export class CoordService {
     };
     const resp = await fetch(url, options);
     const data = (await resp.json()).features[0].geometry.coordinates[0];
-    const convertedData = data.map((coordinates) => {
-      const converted = proj4('EPSG:2180', 'EPSG:4326').forward(coordinates);
-      return [converted[1], converted[0]];
-    });
 
-    return convertedData;
+    return data.map((coords) => [coords[1], coords[0]]);
   }
 }
