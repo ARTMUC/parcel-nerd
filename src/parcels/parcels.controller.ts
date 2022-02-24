@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import * as Bluebird from 'bluebird';
 import { ParcelsService } from './parcels.service';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
@@ -33,6 +34,10 @@ export class ParcelsController {
   @Post('coordsToDeg')
   converCoordsToDeg(@Body() coordinatesArr: LineCoordinates[]) {
     return this.coordService.convertToDeg(coordinatesArr, 'forward');
+  }
+  @Post('getByLatLng') // get the logic out of here!!!!! create new interface - one point
+  async getParcelIdsByLatLng(@Body() coordinatesArr: LineCoordinates[]) {
+    return this.parcelsService.getParcelsIdsByLatLng(coordinatesArr);
   }
 
   // @Post()

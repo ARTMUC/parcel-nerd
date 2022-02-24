@@ -69,7 +69,7 @@ export class CoordService {
   convertToDeg(
     data: ParcelBounds | LineCoordinates[],
     direction: 'forward' | 'invert',
-  ): ParcelBounds {
+  ): ParcelBounds | LineCoordinates[] {
     proj4.defs([
       [
         'EPSG:2180',
@@ -88,7 +88,10 @@ export class CoordService {
         }
         case 'invert': {
           const flippedCoords = [coordinates[1], coordinates[0]];
-          return proj4('EPSG:2180', 'EPSG:4326').invert(flippedCoords);
+          const convertedCoords = proj4('EPSG:4326', 'EPSG:2180').forward(
+            flippedCoords,
+          );
+          return [convertedCoords[1], convertedCoords[0]];
         }
       }
     });

@@ -16,7 +16,24 @@ export class ParcelsService {
       this.coordService.splitLines(coordinatesArr),
       this.coordService.getParcelInfoForEl,
       {
-        concurrency: 10,
+        concurrency: 20,
+      },
+    );
+    return this.coordService.removeDuplicates(results);
+  }
+
+  async getParcelsIdsByLatLng(
+    coordinatesArr: LineCoordinates[],
+  ): Promise<ParcelInfo[]> {
+    const convertedData = this.coordService.convertToDeg(
+      coordinatesArr,
+      'invert',
+    );
+    const results = await Bluebird.map(
+      convertedData,
+      this.coordService.getParcelInfoForEl,
+      {
+        concurrency: 20,
       },
     );
     return this.coordService.removeDuplicates(results);
@@ -27,7 +44,7 @@ export class ParcelsService {
       parcelIdArr,
       this.coordService.getParcelCoordinates,
       {
-        concurrency: 10,
+        concurrency: 20,
       },
     );
     return coordinates.map((parcelCoords) =>
