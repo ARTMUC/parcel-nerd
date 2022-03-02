@@ -35,7 +35,7 @@ export class ParcelsController {
   converCoordsToDeg(@Body() coordinatesArr: LineCoordinates[]) {
     return this.coordService.convertToDeg(coordinatesArr, 'forward');
   }
-  @Post('getByLatLng') // get the logic out of here!!!!! create new interface - one point
+  @Post('getByLatLng')
   async getParcelIdsByLatLng(@Body() coordinatesArr: LineCoordinates[]) {
     return this.parcelsService.getParcelsIdsByLatLng(coordinatesArr);
   }

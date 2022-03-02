@@ -110,8 +110,13 @@ export class CoordService {
       body: Readable.from(encoder),
     };
     const resp = await fetch(url, options);
-    const data = (await resp.json()).features[0].geometry.coordinates[0];
+    const data = await resp.json();
 
-    return data.map((coords) => [coords[1], coords[0]]);
+    if (!data.features) return [[0, 0]];
+
+    const parcelCoords = data.features[0].geometry.coordinates[0];
+    return parcelCoords.map((coords) => [coords[1], coords[0]]);
+    // const data = (await resp.json()).features[0].geometry.coordinates[0];
+    // return data.map((coords) => [coords[1], coords[0]]);
   }
 }

@@ -44,7 +44,7 @@ export class ParcelsService {
       parcelIdArr,
       this.coordService.getParcelCoordinates,
       {
-        concurrency: 20,
+        concurrency: 10,
       },
     );
     return coordinates.map((parcelCoords) =>
