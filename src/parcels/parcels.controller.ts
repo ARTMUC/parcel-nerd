@@ -22,23 +22,28 @@ export class ParcelsController {
     private readonly coordService: CoordService,
   ) {}
 
-  @Post('getByCoordinates')
-  getParcelsIds(@Body() coordinatesArr: LineCoordinates[]) {
-    return this.parcelsService.getParcelsIds(coordinatesArr);
+  @Post('getParcelByXY/:x,:y')
+  getParcelByXY(@Param('x') x: string, @Param('y') y: string) {
+    return this.parcelsService.getParcelByXY(+x, +y);
   }
 
-  @Post('getBoudsById')
-  getParcelBounds(@Body() parcelIdArr: ParcelId[]) {
-    return this.parcelsService.getParcelsBouds(parcelIdArr);
-  }
-  @Post('coordsToDeg')
-  converCoordsToDeg(@Body() coordinatesArr: LineCoordinates[]) {
-    return this.coordService.convertToDeg(coordinatesArr, 'forward');
-  }
-  @Post('getByLatLng')
-  async getParcelIdsByLatLng(@Body() coordinatesArr: LineCoordinates[]) {
-    return this.parcelsService.getParcelsIdsByLatLng(coordinatesArr);
-  }
+  // @Post('getByCoordinates')
+  // getParcelsIds(@Body() coordinatesArr: LineCoordinates[]) {
+  //   return this.parcelsService.getParcelsIds(coordinatesArr);
+  // }
+
+  // @Post('getBoudsById')
+  // getParcelBounds(@Body() parcelIdArr: ParcelId[]) {
+  //   return this.parcelsService.getParcelsBouds(parcelIdArr);
+  // }
+  // @Post('coordsToDeg')
+  // converCoordsToDeg(@Body() coordinatesArr: LineCoordinates[]) {
+  //   return this.coordService.convertToDeg(coordinatesArr, 'forward');
+  // }
+  // @Post('getByLatLng')
+  // async getParcelIdsByLatLng(@Body() coordinatesArr: LineCoordinates[]) {
+  //   return this.parcelsService.getParcelsIdsByLatLng(coordinatesArr);
+  // }
 
   // @Post()
   // create(@Body() createParcelDto: CreateParcelDto) {
