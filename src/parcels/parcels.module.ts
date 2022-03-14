@@ -4,9 +4,10 @@ import { ParcelsController } from './parcels.controller';
 
 import { ConfigModule } from '@nestjs/config';
 import { CoordService } from './coord.service';
+import { PrismaModule } from 'prisma/prisma.module';
 
 @Module({
-  imports: [],
+  imports: [PrismaModule],
   controllers: [ParcelsController],
   providers: [ParcelsService, CoordService],
 })

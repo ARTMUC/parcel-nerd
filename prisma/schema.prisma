@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.sqlite"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+model User {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  name                   String
+  password               String
+  isEmailConfirmed       Boolean
+  emailConfirmationToken String
+  test1234               String
+  projects               Project[]
+  Parcel                 Parcel[]
+}
+
+model Project {
+  id       String             @id @default(uuid())
+  title    String
+  content  String
+  author   User               @relation(fields: [authorId], references: [id])
+  authorId String
+  lines    Line[]
+  owners   OwnersOnProjects[]
+}
+
+model Line {
+  id         String       @id @default(uuid())
+  title      String
+  lineCoords LineCoords[]
+  project    Project      @relation(fields: [projectId], references: [id])
+  projectId  String
+}
+
+model LineCoords {
+  id     String @id @default(uuid())
+  x      Float
+  y      Float
+  line   Line   @relation(fields: [lineId], references: [id])
+  lineId String
+}
+
+model Parcel {
+  id           String         @id @default(uuid())
+  voivodeship  String
+  county       String
+  commune      String
+  KW           String?
+  class        String?
+  author       User           @relation(fields: [authorId], references: [id])
+  authorId     String
+  parcelBounds ParcelBounds[]
+}
+
+model ParcelBounds {
+  id       String @id @default(uuid())
+  x        Float
+  y        Float
+  parcel   Parcel @relation(fields: [parcelId], references: [id])
+  parcelId String
+}
+
+model Owner {
+  id         String             @id @default(uuid())
+  name       String
+  surname    String
+  streetName String?
+  homeNumber String?
+  city       String?
+  postalCode String?
+  projects   OwnersOnProjects[]
+}
+
+model OwnersOnProjects {
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String // relation scalar field (used in the `@relation` attribute above)
+  owner      Owner    @relation(fields: [ownerId], references: [id])
+  ownerId    String // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+
+  @@id([projectId, ownerId])
+}

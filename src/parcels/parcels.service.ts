@@ -1,17 +1,29 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import * as Bluebird from 'bluebird';
+import { PrismaService } from '../../prisma/prisma.service';
 import { LineCoordinates } from './interfaces/line-coordinates.type';
 import { ParcelInfo } from './interfaces/parcel-info.interface';
-import { ParcelId } from './interfaces/parcelId.type';
 import { CoordService } from './coord.service';
 import { ParcelBounds } from './interfaces/parcel-boundaries.type';
 import fetch from 'node-fetch';
 
 @Injectable()
 export class ParcelsService {
-  constructor(private coordService: CoordService) {}
+  constructor(
+    private coordService: CoordService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async getParcelByXY(x: number, y: number): Promise<ParcelInfo> {
+    await this.prismaService.user.create({
+      data: {
+        email: 'asdfsadf1111111111111111111111',
+        test1234: 'asdfasdfasdf',
+        name: 'adsfasdfasdf',
+        password: 'safdsdfhsdfgh',
+        isEmailConfirmed: true,
+        emailConfirmationToken: 'asdgasdfasdfasdfasdf',
+      },
+    });
     const res = await fetch(
       `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${y},${x},4326&result=id,voivodeship,county,commune,geom_wkt&srid=4326`,
     );
@@ -40,69 +52,4 @@ export class ParcelsService {
       boundCoords,
     };
   }
-
-  // async getParcelsIds(
-  //   coordinatesArr: LineCoordinates[],
-  // ): Promise<ParcelInfo[]> {
-  //   const results: ParcelInfo[] = await Bluebird.map(
-  //     this.coordService.splitLines(coordinatesArr),
-  //     this.coordService.getParcelInfoForEl,
-  //     {
-  //       concurrency: 20,
-  //     },
-  //   );
-  //   return this.coordService.removeDuplicates(results);
-  // }
-
-  // async getParcelsIdsByLatLng(
-  //   coordinatesArr: LineCoordinates[],
-  // ): Promise<ParcelInfo[]> {
-  //   const convertedData = this.coordService.convertToDeg(
-  //     coordinatesArr,
-  //     'invert',
-  //   );
-  //   const results = await Bluebird.map(
-  //     convertedData,
-  //     this.coordService.getParcelInfoForEl,
-  //     {
-  //       concurrency: 20,
-  //     },
-  //   );
-  //   return this.coordService.removeDuplicates(results);
-  // }
-
-  // async getParcelsBouds(parcelIdArr: ParcelId[]): Promise<ParcelBounds[]> {
-  //   const coordinates: ParcelBounds[] = await Bluebird.map(
-  //     parcelIdArr,
-  //     this.coordService.getParcelCoordinates,
-  //     {
-  //       concurrency: 10,
-  //     },
-  //   );
-  //   return coordinates.map((parcelCoords) =>
-  //     this.coordService.convertToDeg(parcelCoords, 'forward'),
-  //   );
-  // }
-  // print() {
-  //   console.log('xxxxxxxxxxxxxxx');
-  // }
-  // create(createParcelDto: CreateParcelDto) {
-  //   return 'This action adds a new parcel';
-  // }
-
-  // findAll() {
-  //   return `This action returns all parcels`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} parcel`;
-  // }
-
-  // update(id: number, updateParcelDto: UpdateParcelDto) {
-  //   return `This action updates a #${id} parcel`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} parcel`;
-  // }
 }
