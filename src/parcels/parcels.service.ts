@@ -14,16 +14,6 @@ export class ParcelsService {
   ) {}
 
   async getParcelByXY(x: number, y: number): Promise<ParcelInfo> {
-    await this.prismaService.user.create({
-      data: {
-        email: 'asdfsadf1111111111111111111111',
-        test1234: 'asdfasdfasdf',
-        name: 'adsfasdfasdf',
-        password: 'safdsdfhsdfgh',
-        isEmailConfirmed: true,
-        emailConfirmationToken: 'asdgasdfasdfasdfasdf',
-      },
-    });
     const res = await fetch(
       `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${y},${x},4326&result=id,voivodeship,county,commune,geom_wkt&srid=4326`,
     );

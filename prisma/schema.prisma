@@ -20,9 +20,8 @@ model User {
   email                  String    @unique
   name                   String
   password               String
-  isEmailConfirmed       Boolean
+  isEmailConfirmed       Boolean   @default(false)
   emailConfirmationToken String
-  test1234               String
   projects               Project[]
   Parcel                 Parcel[]
 }

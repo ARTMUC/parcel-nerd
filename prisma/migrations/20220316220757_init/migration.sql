@@ -4,9 +4,8 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isEmailConfirmed" BOOLEAN NOT NULL,
-    "emailConfirmationToken" TEXT NOT NULL,
-    "test1234" TEXT NOT NULL
+    "isEmailConfirmed" BOOLEAN NOT NULL DEFAULT false,
+    "emailConfirmationToken" TEXT NOT NULL
 );
 
 -- CreateTable
