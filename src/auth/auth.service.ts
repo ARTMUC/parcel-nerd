@@ -36,6 +36,7 @@ export class AuthService {
       emailConfirmationToken,
     });
     await this.mailService.sendUserConfirmationEmail(createdUser);
+
     return createdUser;
   }
 

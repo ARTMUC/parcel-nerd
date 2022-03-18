@@ -18,36 +18,48 @@ import { LocalAuthenticationGuard } from './guards/local-auth.guard';
 import { RequestHandler, Response } from 'express';
 import JwtAuthenticationGuard from './guards/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
-import { ApiBody } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import LoginDto from './dto/login.dto';
+import { UserResponce } from './dto/user-responce.dto';
 
 @Controller('auth')
-// @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
     private readonly authenticationService: AuthService,
     private readonly usersService: UsersService,
   ) {}
 
+  @ApiCreatedResponse({ type: UserResponce })
   @Post('signup')
   async register(@Body() registrationData: RegisterDto) {
-    return this.authenticationService.signup(registrationData);
+    const { id, name, email } = await this.authenticationService.signup(
+      registrationData,
+    );
+    return { id, name, email } as UserResponce;
   }
-
+  @ApiOkResponse()
   @Get('confirm-email/:token/:id')
   async confirmEmail(@Param('token') token: string, @Param('id') id: string) {
     return this.authenticationService.confirmUserEmailWithToken(id, token);
   }
+
+  @ApiOkResponse({ type: UserResponce })
   @ApiBody({ type: LoginDto })
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('signin')
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
-    const jwtCookie = this.authenticationService.createToken(user.id);
+    const { id, name, email } = user;
+    const jwtCookie = this.authenticationService.createToken(id);
 
     request.res.setHeader('Set-Cookie', [jwtCookie]);
-    return user;
+    return { id, name, email } as UserResponce;
   }
   @HttpCode(200)
   @UseGuards(JwtAuthenticationGuard)
@@ -59,10 +71,13 @@ export class AuthController {
     );
     return 'you are logged out';
   }
+
+  @ApiOkResponse({ type: UserResponce })
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;
-    return user;
+    const { id, name, email } = user;
+    return { id, name, email } as UserResponce;
   }
 }

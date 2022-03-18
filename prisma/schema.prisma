@@ -15,6 +15,20 @@ datasource db {
 //   url      = env("DATABASE_URL")
 // }
 
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../src/generated/nestjs-dto"
+  outputToNestJsResourceStructure = "false"
+  exportRelationModifierClasses   = "true"
+  reExport                        = "false"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                    = "Entity"
+  fileNamingStyle                 = "camel"
+}
+
 model User {
   id                     String    @id @default(uuid())
   email                  String    @unique
@@ -23,17 +37,16 @@ model User {
   isEmailConfirmed       Boolean   @default(false)
   emailConfirmationToken String
   projects               Project[]
-  Parcel                 Parcel[]
 }
 
 model Project {
-  id       String             @id @default(uuid())
+  id       String   @id @default(uuid())
   title    String
   content  String
-  author   User               @relation(fields: [authorId], references: [id])
-  authorId String
+  user     User     @relation(fields: [userId], references: [id])
+  userId String
   lines    Line[]
-  owners   OwnersOnProjects[]
+  parcels  Parcel[]
 }
 
 model Line {
@@ -59,9 +72,10 @@ model Parcel {
   commune      String
   KW           String?
   class        String?
-  author       User           @relation(fields: [authorId], references: [id])
-  authorId     String
   parcelBounds ParcelBounds[]
+  owners       Owner[]
+  Project      Project?       @relation(fields: [projectId], references: [id])
+  projectId    String?
 }
 
 model ParcelBounds {
@@ -73,22 +87,23 @@ model ParcelBounds {
 }
 
 model Owner {
-  id         String             @id @default(uuid())
+  id         String   @id @default(uuid())
   name       String
   surname    String
   streetName String?
   homeNumber String?
   city       String?
   postalCode String?
-  projects   OwnersOnProjects[]
+  parcels    Parcel[]
+  projectId  String?
 }
 
-model OwnersOnProjects {
-  project    Project  @relation(fields: [projectId], references: [id])
-  projectId  String // relation scalar field (used in the `@relation` attribute above)
-  owner      Owner    @relation(fields: [ownerId], references: [id])
-  ownerId    String // relation scalar field (used in the `@relation` attribute above)
-  assignedAt DateTime @default(now())
+// model OwnersOnProjects {
+//   project    Project  @relation(fields: [projectId], references: [id])
+//   projectId  String // relation scalar field (used in the `@relation` attribute above)
+//   owner      Owner    @relation(fields: [ownerId], references: [id])
+//   ownerId    String // relation scalar field (used in the `@relation` attribute above)
+//   assignedAt DateTime @default(now())
 
-  @@id([projectId, ownerId])
-}
+//   @@id([projectId, ownerId])
+// }

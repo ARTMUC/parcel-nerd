@@ -13,8 +13,8 @@ CREATE TABLE "Project" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "authorId" TEXT NOT NULL,
-    CONSTRAINT "Project_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -42,8 +42,8 @@ CREATE TABLE "Parcel" (
     "commune" TEXT NOT NULL,
     "KW" TEXT,
     "class" TEXT,
-    "authorId" TEXT NOT NULL,
-    CONSTRAINT "Parcel_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "projectId" TEXT,
+    CONSTRAINT "Parcel_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -63,19 +63,23 @@ CREATE TABLE "Owner" (
     "streetName" TEXT,
     "homeNumber" TEXT,
     "city" TEXT,
-    "postalCode" TEXT
+    "postalCode" TEXT,
+    "projectId" TEXT
 );
 
 -- CreateTable
-CREATE TABLE "OwnersOnProjects" (
-    "projectId" TEXT NOT NULL,
-    "ownerId" TEXT NOT NULL,
-    "assignedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    PRIMARY KEY ("projectId", "ownerId"),
-    CONSTRAINT "OwnersOnProjects_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "OwnersOnProjects_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Owner" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE "_OwnerToParcel" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+    FOREIGN KEY ("A") REFERENCES "Owner" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("B") REFERENCES "Parcel" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_OwnerToParcel_AB_unique" ON "_OwnerToParcel"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_OwnerToParcel_B_index" ON "_OwnerToParcel"("B");

@@ -1,26 +1,69 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  constructor(private readonly repo: PrismaService) {}
+
+  create(createProjectDto: CreateProjectDto, user: User) {
+    return this.repo.project.create({
+      data: {
+        ...createProjectDto,
+        user: {
+          connect: { id: user.id },
+        },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  findAll(user: User) {
+    return this.repo.project.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        userId: true,
+      },
+      where: {
+        userId: user.id,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  findOne(id: string, user: User) {
+    return this.repo.project.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        userId: true,
+      },
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  update(id: string, updateProjectDto: UpdateProjectDto, user: User) {
+    return this.repo.project.updateMany({
+      data: updateProjectDto,
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  remove(id: string, user: User) {
+    return this.repo.project.deleteMany({
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
   }
 }
