@@ -1,16 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ParcelsService } from './parcels.service';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
+import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
 
 @Controller('parcels')
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
-  @Post()
-  create(@Body() createParcelDto: CreateParcelDto) {
-    return this.parcelsService.create(createParcelDto);
+  @Post('getParcelByXY/:projectId')
+  getParcelByXY(
+    @Param('projectId') projectId: string,
+    @Body() createParcelByXYDto: CreateParcelByXYDto,
+  ) {
+    return this.parcelsService.getParcelByXY(createParcelByXYDto, projectId);
   }
+
+  // @Post()
+  // create(@Body() createParcelDto: CreateParcelDto) {
+  //   return this.parcelsService.create(createParcelDto);
+  // }
 
   @Get()
   findAll() {

@@ -6,6 +6,7 @@ import {ProjectEntity} from './project.entity'
 
 export class ParcelEntity {
   id: string ;
+parcelNumber: string ;
 voivodeship: string ;
 county: string ;
 commune: string ;
@@ -13,6 +14,6 @@ KW: string  | null;
 class: string  | null;
 parcelBounds?: ParcelBoundsEntity[] ;
 owners?: OwnerEntity[] ;
-Project?: ProjectEntity  | null;
+project?: ProjectEntity  | null;
 projectId: string  | null;
 }

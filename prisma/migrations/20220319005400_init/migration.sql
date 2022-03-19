@@ -37,6 +37,7 @@ CREATE TABLE "LineCoords" (
 -- CreateTable
 CREATE TABLE "Parcel" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "parcelNumber" TEXT NOT NULL,
     "voivodeship" TEXT NOT NULL,
     "county" TEXT NOT NULL,
     "commune" TEXT NOT NULL,

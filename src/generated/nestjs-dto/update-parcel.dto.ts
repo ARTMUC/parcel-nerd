@@ -5,7 +5,8 @@
 
 
 export class UpdateParcelDto {
-  voivodeship?: string;
+  parcelNumber?: string;
+voivodeship?: string;
 county?: string;
 commune?: string;
 KW?: string;

@@ -14,7 +14,7 @@ import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { LineCoordinates } from './interfaces/line-coordinates.type';
 import { CoordService } from './coord.service';
 
-@Controller('parcels')
+@Controller('xxx')
 export class ParcelsController {
   constructor(
     private readonly parcelsService: ParcelsService,

@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 export class UpdateParcelDto {
   @ApiProperty()
   @IsString()
-  voivodeship: string;
+  parcelNumber: string;
 
   @ApiProperty()
   @IsString()

@@ -1,7 +1,15 @@
+// hcnage it to interface!!!!!!!!!!!!
+
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { CreateParcelBoundsDto } from './create-parcelBounds.dto';
 
 export class CreateParcelDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  parcelNumber: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -26,4 +34,8 @@ export class CreateParcelDto {
   @IsString()
   @IsNotEmpty()
   class?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  parcelBounds: any; // [{x:number,y:number}] change type
 }
