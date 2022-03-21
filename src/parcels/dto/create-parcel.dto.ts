@@ -1,5 +1,3 @@
-// hcnage it to interface!!!!!!!!!!!!
-
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { CreateParcelBoundsDto } from './create-parcelBounds.dto';

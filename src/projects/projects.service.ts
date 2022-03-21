@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'prisma/prisma.service';
@@ -33,8 +33,8 @@ export class ProjectsService {
     });
   }
 
-  findOne(id: string, user: User) {
-    return this.repo.project.findMany({
+  async findOne(id: string, user: User) {
+    const [project] = await this.repo.project.findMany({
       select: {
         id: true,
         title: true,
@@ -46,6 +46,10 @@ export class ProjectsService {
         userId: user.id,
       },
     });
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
   }
 
   update(id: string, updateProjectDto: UpdateProjectDto, user: User) {

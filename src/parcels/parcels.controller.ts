@@ -6,22 +6,32 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ParcelsService } from './parcels.service';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
+import { ApiOkResponse } from '@nestjs/swagger';
+import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
+import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 
 @Controller('parcels')
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
+  @ApiOkResponse()
+  @UseGuards(JwtAuthenticationGuard)
   @Post('getParcelByXY/:projectId')
-  getParcelByXY(
+  async getParcelByXY(
     @Param('projectId') projectId: string,
     @Body() createParcelByXYDto: CreateParcelByXYDto,
+    @Req() request: RequestWithUser,
   ) {
-    return this.parcelsService.getParcelByXY(createParcelByXYDto, projectId);
+    const { user } = request;
+
+    return this.parcelsService.create(projectId, user, createParcelByXYDto);
   }
 
   // @Post()
@@ -44,8 +54,11 @@ export class ParcelsController {
     return this.parcelsService.update(+id, updateParcelDto);
   }
 
+  @ApiOkResponse()
+  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parcelsService.remove(+id);
+  remove(@Param('id') parcelId: string, @Req() request: RequestWithUser) {
+    const { user } = request;
+    return this.parcelsService.remove(parcelId, user);
   }
 }
