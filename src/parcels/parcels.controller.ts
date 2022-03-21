@@ -17,12 +17,12 @@ import { ApiOkResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
 import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 
+@UseGuards(JwtAuthenticationGuard)
 @Controller('parcels')
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
   @ApiOkResponse()
-  @UseGuards(JwtAuthenticationGuard)
   @Post('getParcelByXY/:projectId')
   async getParcelByXY(
     @Param('projectId') projectId: string,
@@ -34,31 +34,46 @@ export class ParcelsController {
     return this.parcelsService.create(projectId, user, createParcelByXYDto);
   }
 
+  @ApiOkResponse()
+  @Get()
+  findAll(@Req() request: RequestWithUser) {
+    const { user } = request;
+
+    return this.parcelsService.findAll(user);
+  }
+
+  @ApiOkResponse()
+  @Get(':id')
+  findOne(@Param('id') id: string, @Req() request: RequestWithUser) {
+    const { user } = request;
+
+    return this.parcelsService.findOne(id, user);
+  }
+
+  // ************* TO DO LATER *******************
+  // - ADDING PARCEL BY ID
+
   // @Post()
   // create(@Body() createParcelDto: CreateParcelDto) {
   //   return this.parcelsService.create(createParcelDto);
   // }
-
-  @Get()
-  findAll() {
-    return this.parcelsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.parcelsService.findOne(+id);
-  }
-
+  @ApiOkResponse()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParcelDto: UpdateParcelDto) {
-    return this.parcelsService.update(+id, updateParcelDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateParcelDto: UpdateParcelDto,
+    @Req() request: RequestWithUser,
+  ) {
+    const { user } = request;
+
+    return this.parcelsService.update(id, updateParcelDto, user);
   }
 
   @ApiOkResponse()
-  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
   remove(@Param('id') parcelId: string, @Req() request: RequestWithUser) {
     const { user } = request;
+
     return this.parcelsService.remove(parcelId, user);
   }
 }

@@ -40,6 +40,9 @@ export class ParcelsService {
           project: {
             connect: { id: projectId },
           },
+          user: {
+            connect: { id: user.id },
+          },
           parcelBounds: {
             create: parcelBounds,
           },
@@ -49,64 +52,78 @@ export class ParcelsService {
     });
   }
 
-  findAll() {
-    return `This action returns all parcels`;
+  async findAll(user: User) {
+    const parcels = await this.repo.parcel.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        parcelBounds: true,
+      },
+    });
+    if (parcels.length < 1) {
+      throw new NotFoundException('Parcel not found');
+    }
+    return parcels;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} parcel`;
+  async findOne(id: string, user: User) {
+    const [parcel] = await this.repo.parcel.findMany({
+      where: {
+        id,
+        userId: user.id,
+      },
+      include: {
+        parcelBounds: true,
+      },
+    });
+    if (!parcel) {
+      throw new NotFoundException('Parcel not found');
+    }
+    return parcel;
   }
 
-  update(id: number, updateParcelDto: UpdateParcelDto) {
-    return `This action updates a #${id} parcel`;
+  async update(parcelId: string, updateParcelDto: UpdateParcelDto, user: User) {
+    console.log(updateParcelDto);
+    const result = await this.repo.parcel.updateMany({
+      where: {
+        id: parcelId,
+        userId: user.id,
+      },
+      data: {
+        ...updateParcelDto,
+      },
+    });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Parcel not found');
+    }
+
+    return result;
   }
 
   async remove(parcelId: string, user: User) {
     return await this.repo.$transaction(async (repo) => {
-      const parcel = (
-        await repo.user.findMany({
-          where: {
-            id: user.id,
-          },
-          select: {
-            projects: {
-              select: {
-                parcels: {
-                  select: { id: true },
-                  where: {
-                    id: parcelId,
-                  },
-                },
-              },
-            },
-          },
-        })
-      )[0].projects[0].parcels[0];
+      const deleteBounds = repo.parcelBounds.deleteMany({
+        where: {
+          parcelId,
+        },
+      });
 
-      if (!parcel) {
-        throw new NotFoundException('Project not found');
+      const deleteParcel = repo.parcel.deleteMany({
+        where: {
+          id: parcelId,
+          userId: user.id,
+        },
+      });
+
+      const result = await Promise.all([deleteBounds, deleteParcel]);
+
+      if (result[0].count === 0 || result[1].count === 0) {
+        throw new NotFoundException('Parcel not found');
       }
 
-      const deleteBounds = repo.parcel.update({
-        where: {
-          id: parcelId,
-        },
-        data: {
-          parcelBounds: {
-            deleteMany: {},
-          },
-        },
-      });
-
-      const deleteParcel = repo.parcel.delete({
-        where: {
-          id: parcelId,
-        },
-      });
-
-      await Promise.all([deleteBounds, deleteParcel]);
-
-      return 'success';
+      return result;
     });
   }
 }

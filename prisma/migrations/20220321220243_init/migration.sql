@@ -44,12 +44,14 @@ CREATE TABLE "Parcel" (
     "KW" TEXT,
     "class" TEXT,
     "projectId" TEXT,
+    "userId" TEXT,
+    CONSTRAINT "Parcel_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Parcel_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "ParcelBounds" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "x" REAL NOT NULL,
     "y" REAL NOT NULL,
     "parcelId" TEXT NOT NULL,
@@ -65,7 +67,9 @@ CREATE TABLE "Owner" (
     "homeNumber" TEXT,
     "city" TEXT,
     "postalCode" TEXT,
-    "projectId" TEXT
+    "projectId" TEXT,
+    "userId" TEXT,
+    CONSTRAINT "Owner_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

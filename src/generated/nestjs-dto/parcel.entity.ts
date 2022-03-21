@@ -2,6 +2,7 @@
 import {ParcelBoundsEntity} from './parcelBounds.entity'
 import {OwnerEntity} from './owner.entity'
 import {ProjectEntity} from './project.entity'
+import {UserEntity} from './user.entity'
 
 
 export class ParcelEntity {
@@ -16,4 +17,6 @@ parcelBounds?: ParcelBoundsEntity[] ;
 owners?: OwnerEntity[] ;
 project?: ProjectEntity  | null;
 projectId: string  | null;
+user?: UserEntity  | null;
+userId: string  | null;
 }

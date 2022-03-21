@@ -1,5 +1,5 @@
 
   export class ConnectParcelBoundsDto {
-    id: string;
+    id: number;
   }
   
