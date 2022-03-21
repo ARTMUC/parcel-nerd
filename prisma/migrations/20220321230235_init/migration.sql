@@ -67,7 +67,6 @@ CREATE TABLE "Owner" (
     "homeNumber" TEXT,
     "city" TEXT,
     "postalCode" TEXT,
-    "projectId" TEXT,
     "userId" TEXT,
     CONSTRAINT "Owner_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );

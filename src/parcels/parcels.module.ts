@@ -9,5 +9,6 @@ import { ParcelDataGetterService } from './parcel-data-getter.service';
   imports: [PrismaModule, ProjectsModule],
   controllers: [ParcelsController],
   providers: [ParcelsService, ParcelDataGetterService],
+  exports: [ParcelsService],
 })
 export class ParcelsModule {}

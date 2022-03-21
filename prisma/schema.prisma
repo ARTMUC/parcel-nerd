@@ -101,7 +101,6 @@ model Owner {
   city       String?
   postalCode String?
   parcels    Parcel[]
-  projectId  String?
   user       User?    @relation(fields: [userId], references: [id])
   userId     String?
 }

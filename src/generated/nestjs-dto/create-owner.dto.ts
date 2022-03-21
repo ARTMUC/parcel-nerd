@@ -11,5 +11,4 @@ streetName?: string;
 homeNumber?: string;
 city?: string;
 postalCode?: string;
-projectId?: string;
 }

@@ -1,3 +1,6 @@
+// **************** TEST WHAT HAPPENS WITH OWNERS ON DELETE, UPDATE, CREATE ****************************
+// IF WE ALREADY HAVE OWNERS FOR THIS PARCEL IN DB I WOULD LIKE TO JUST UPDATE THEM
+
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
@@ -59,6 +62,7 @@ export class ParcelsService {
       },
       include: {
         parcelBounds: true,
+        owners: { select: { name: true, surname: true, id: true } },
       },
     });
     if (parcels.length < 1) {
@@ -75,6 +79,7 @@ export class ParcelsService {
       },
       include: {
         parcelBounds: true,
+        owners: true,
       },
     });
     if (!parcel) {

@@ -20,18 +20,20 @@ import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 export class OwnersController {
   constructor(private readonly ownersService: OwnersService) {}
 
-  @Post()
+  @Post(':parcelId')
   create(
+    @Param('parcelId') parcelId: string,
     @Body() createOwnerDto: CreateOwnerDto,
     @Req() request: RequestWithUser,
   ) {
     const { user } = request;
-    return this.ownersService.create(createOwnerDto, user);
+    return this.ownersService.create(createOwnerDto, user, parcelId);
   }
 
   @Get()
   findAll(@Req() request: RequestWithUser) {
-    return this.ownersService.findAll();
+    const { user } = request;
+    return this.ownersService.findAll(user);
   }
 
   @Get(':id')

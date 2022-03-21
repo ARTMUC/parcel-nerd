@@ -12,7 +12,6 @@ homeNumber: string  | null;
 city: string  | null;
 postalCode: string  | null;
 parcels?: ParcelEntity[] ;
-projectId: string  | null;
 user?: UserEntity  | null;
 userId: string  | null;
 }

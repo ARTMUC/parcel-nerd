@@ -31,9 +31,4 @@ export class CreateOwnerDto {
   @IsString()
   @IsNotEmpty()
   postalCode?: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  projectId?: string;
 }
