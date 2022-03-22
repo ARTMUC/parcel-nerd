@@ -14,6 +14,8 @@ export class OwnersService {
 
   create(createOwnerDto: CreateOwnerDto, user: User, parcelId: string) {
     return this.repo.$transaction(async (repo) => {
+      //*********** I NEED TO CHANGE THIS -> ADDING OWNERS SHOULD BE INDEPENDENT. WE SHOULD BE ABLE TO PASS AS MANY PARCEL NUMBERS AS POSSIBLE. ADDING OWNERS SHOULD BE CORRELATED WITH PARCEL NUMBERS AND NOT PARCEL IDs. IF THE PARCEL DOES NOT EXIST THEN PARCEL WOULD BE ADDED BY PARCEL NUMBER AND FETCHED FROM THE GEO API *****************************************
+
       const parcel = await this.parcelsService.findOne(parcelId, user);
 
       if (!parcel) {
@@ -32,7 +34,6 @@ export class OwnersService {
         },
       });
     });
-    return 'This action adds a new owner';
   }
 
   async findAll(user: User) {
@@ -43,9 +44,42 @@ export class OwnersService {
       include: { parcels: { select: { parcelNumber: true, id: true } } },
     });
     if (owners.length < 1) {
-      throw new NotFoundException('Parcel not found');
+      throw new NotFoundException('Owners not found');
     }
     return owners;
+  }
+
+  async findManyByParcelNumber(parcelNumber: string, user: User) {
+    console.log(parcelNumber);
+    // const owners = await this.repo.$queryRawUnsafe(
+    //   `SELECT DISTINCT Owner.id as ownerId FROM Owner LEFT JOIN _OwnerToParcel ON Owner.id = _OwnerToParcel.A LEFT JOIN Parcel ON _OwnerToParcel.B = Parcel.id WHERE Parcel.parcelNumber = ?`,
+    //   parcelNumber,
+    // );
+    // const parcels = await this.repo.$queryRawUnsafe(
+    //   `SELECT DISTINCT  Parcel.id as parcelId, Parcel.parcelNumber FROM Owner LEFT JOIN _OwnerToParcel ON Owner.id = _OwnerToParcel.A LEFT JOIN Parcel ON _OwnerToParcel.B = Parcel.id WHERE Parcel.parcelNumber = ?`,
+    //   parcelNumber,
+    // );
+
+    const owners = await this.repo.parcel.findMany({
+      where: {
+        userId: user.id,
+        parcelNumber,
+      },
+
+      // distinct: ['id'],
+      select: {
+        parcelNumber: true,
+        id: true,
+        owners: {
+          select: { id: true, name: true },
+          // distinct: ['id'],
+        },
+      },
+    });
+
+    return owners;
+
+    // return { owners, parcels };
   }
 
   findOne(id: number) {

@@ -1,5 +1,5 @@
 // **************** TEST WHAT HAPPENS WITH OWNERS ON DELETE, UPDATE, CREATE ****************************
-// IF WE ALREADY HAVE OWNERS FOR THIS PARCEL IN DB I WOULD LIKE TO JUST UPDATE THEM
+// IF WE ALREADY HAVE OWNERS FOR THIS PARCEL IN DB I WOULD LIKE TO JUST UPDATE THEM <- ITS NOT POSSIBLE TO HAVE OWNERS WITHOUT PARCELS. AFTER ADDING OWNER THAT HAS PARCEL NOT EXISTING IN THE DB, OWNERS SERVICE WILL CALL PARCELS SERVICE TO ADD PARCEL BY PARCEL NUMBER
 
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
@@ -22,6 +22,8 @@ export class ParcelsService {
     user: User,
     createParcelByXYDto: CreateParcelByXYDto,
   ): Promise<Parcel> {
+    // TODO: CHACK FIRST IF THIS PARCEL ALREADY EXISTS NOT TO CREATE DUBLES
+
     const { parcelNumber, voivodeship, county, commune, parcelBounds } =
       await this.parcelDataGetterService.fetchParcelDataByXY(
         createParcelByXYDto,

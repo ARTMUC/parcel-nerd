@@ -14,12 +14,14 @@ import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
 import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthenticationGuard)
 @Controller('owners')
 export class OwnersController {
   constructor(private readonly ownersService: OwnersService) {}
 
+  @ApiOkResponse()
   @Post(':parcelId')
   create(
     @Param('parcelId') parcelId: string,
@@ -30,10 +32,21 @@ export class OwnersController {
     return this.ownersService.create(createOwnerDto, user, parcelId);
   }
 
+  @ApiOkResponse()
   @Get()
   findAll(@Req() request: RequestWithUser) {
     const { user } = request;
     return this.ownersService.findAll(user);
+  }
+
+  @ApiOkResponse()
+  @Get('parcel=:parcelNumber')
+  findManyByParcelNumber(
+    @Param('parcelNumber') parcelNumber: string,
+    @Req() request: RequestWithUser,
+  ) {
+    const { user } = request;
+    return this.ownersService.findManyByParcelNumber(parcelNumber, user);
   }
 
   @Get(':id')
