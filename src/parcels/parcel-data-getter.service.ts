@@ -14,14 +14,37 @@ export class ParcelDataGetterService {
     );
 
     const data = await res.text();
-    if (data.substr(0, 1) !== '0')
-      throw new HttpException('Please check input request', 400);
+
+    return this.extractParcelData(data, y + ' ' + x);
+  }
+  async fetchParcelDataByParcelNumber(parcelNo: string) {
+    const res = await fetch(
+      `https://uldk.gugik.gov.pl/?request=GetParcelById&id=${parcelNo}&result=id,voivodeship,county,commune,geom_wkt&srid=4326`,
+    );
+
+    const data = await res.text();
+
+    return this.extractParcelData(data, parcelNo);
+  }
+
+  private extractParcelData(data, iden) {
+    if (data.substr(0, 1) !== '0') {
+      throw new HttpException(
+        `Please check input request. Problem getting parcel ${iden}`,
+        400,
+      );
+    }
+
     const [parcelNumber, voivodeship, county, commune, geom] = data
       .split('\n')[1]
       .split('|');
 
-    if (!parcelNumber || !voivodeship || !county || !commune || !geom)
-      throw new HttpException('Please check input request', 400);
+    if (!parcelNumber || !voivodeship || !county || !commune || !geom) {
+      throw new HttpException(
+        `Please check input request. Problem getting parcel ${iden}`,
+        400,
+      );
+    }
 
     const r = /(([\d.]+)\s+([\d.]+))/g;
     // const parcelBounds = [...geom.matchAll(r)].map((d) => [+d[3], +d[2]]) as [
