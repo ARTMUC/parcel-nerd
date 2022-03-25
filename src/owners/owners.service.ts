@@ -81,24 +81,26 @@ export class OwnersService {
   }
 
   async findOne(ownerId: string, user: User, projectId: string) {
-    const owner = this.repo.owner.findMany({
-      where: {
-        userId: user.id,
-        id: ownerId,
-      },
-      select: {
-        name: true,
-        surname: true,
-        streetName: true,
-        homeNumber: true,
-        city: true,
-        postalCode: true,
-        parcels: { where: { projectId }, select: { id: true } },
-      },
-    });
+    const owner = (
+      await this.repo.owner.findMany({
+        where: {
+          userId: user.id,
+          id: ownerId,
+        },
+        select: {
+          name: true,
+          surname: true,
+          streetName: true,
+          homeNumber: true,
+          city: true,
+          postalCode: true,
+          parcels: { where: { projectId }, select: { id: true } },
+        },
+      })
+    )[0];
 
     if (!owner) {
-      throw new NotFoundException('Parcel not found');
+      throw new NotFoundException('Owner not found');
     }
     return owner;
   }
