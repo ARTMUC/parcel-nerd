@@ -24,14 +24,14 @@ export class ParcelsController {
 
   @ApiOkResponse()
   @Post('getParcelByXY/:projectId')
-  async getParcelByXY(
+  async createByXY(
     @Param('projectId') projectId: string,
     @Body() createParcelByXYDto: CreateParcelByXYDto,
     @Req() request: RequestWithUser,
   ) {
     const { user } = request;
 
-    return this.parcelsService.create(projectId, user, createParcelByXYDto);
+    return this.parcelsService.createByXY(projectId, user, createParcelByXYDto);
   }
 
   @ApiOkResponse()

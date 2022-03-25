@@ -17,7 +17,7 @@ export class ParcelsService {
     private readonly parcelDataGetterService: ParcelDataGetterService,
   ) {}
 
-  async create(
+  async createByXY(
     projectId: string,
     user: User,
     createParcelByXYDto: CreateParcelByXYDto,
@@ -57,6 +57,49 @@ export class ParcelsService {
     });
   }
 
+  //************************THIS METHOD IS NOT USED ANYWHERE********************************/
+  /*****************************************************************************************/
+  async createByParcelNumber(
+    projectId: string,
+    user: User,
+    parcelNo: string,
+  ): Promise<Parcel> {
+    // TODO: CHACK FIRST IF THIS PARCEL ALREADY EXISTS NOT TO CREATE DUBLES
+
+    const { parcelNumber, voivodeship, county, commune, parcelBounds } =
+      await this.parcelDataGetterService.fetchParcelDataByParcelNumber(
+        parcelNo,
+      );
+
+    return this.repo.$transaction(async (repo) => {
+      const project = await this.projectsService.findOne(projectId, user);
+
+      if (!project) {
+        throw new NotFoundException('Project not found');
+      }
+
+      return repo.parcel.create({
+        data: {
+          parcelNumber,
+          voivodeship,
+          county,
+          commune,
+          project: {
+            connect: { id: projectId },
+          },
+          user: {
+            connect: { id: user.id },
+          },
+          parcelBounds: {
+            create: parcelBounds,
+          },
+        },
+        include: { parcelBounds: { select: { x: true, y: true } } },
+      });
+    });
+  }
+  //*********************************************************************************************** */
+
   async findAll(user: User) {
     const parcels = await this.repo.parcel.findMany({
       where: {
@@ -69,8 +112,44 @@ export class ParcelsService {
     });
     if (parcels.length < 1) {
       throw new NotFoundException('Parcel not found');
-    }
+    } // do we really need this error ???
     return parcels;
+  }
+
+  async findManyByParcelNumber(
+    user: User,
+    parcels: string[],
+    projectId: string,
+  ) {
+    //*********************************************************** */
+    // TODO: IT WOULD BE GOOD TO ADD INFO ABOUT PARCEL NUMBERS THAT WE DID NOT FIND IN THE DB
+
+    //****************************************************************** */
+    // const existingParcelsNumbers = existingParcelsData.map(
+    //   (parcel) => parcel.parcelNumber,
+    // );
+
+    // const newParcelsNumbers = createOwnerDto.parcels.filter(
+    //   (el) => !existingParcelsNumbers.includes(el),
+    // );
+
+    // const newParcelsRequest = newParcelsNumbers.map(async (parcelNo) => {
+    //   return await this.parcelDataGetterService.fetchParcelDataByParcelNumber(
+    //     parcelNo,
+    //   );
+    // });
+    // const newParcelsData = await Promise.all(newParcelsRequest);
+
+    //************************************************************** */
+
+    return await this.repo.parcel.findMany({
+      // distinct: ['parcelNumber'],
+      where: {
+        userId: user.id,
+        parcelNumber: { in: parcels },
+        projectId,
+      },
+    });
   }
 
   async findOne(id: string, user: User) {
