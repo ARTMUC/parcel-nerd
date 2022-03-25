@@ -22,14 +22,14 @@ export class OwnersController {
   constructor(private readonly ownersService: OwnersService) {}
 
   @ApiOkResponse()
-  @Post(':parcelId')
+  @Post(':projectId')
   create(
-    @Param('parcelId') parcelId: string,
+    @Param('projectId') projectId: string,
     @Body() createOwnerDto: CreateOwnerDto,
     @Req() request: RequestWithUser,
   ) {
     const { user } = request;
-    return this.ownersService.create(createOwnerDto, user, parcelId);
+    return this.ownersService.create(createOwnerDto, user, projectId);
   }
 
   @ApiOkResponse()
@@ -40,18 +40,29 @@ export class OwnersController {
   }
 
   @ApiOkResponse()
-  @Get('parcel=:parcelNumber')
+  @Get('parcel=:parcelNumber&project=:projectId')
   findManyByParcelNumber(
+    @Param('projectId') projectId: string,
     @Param('parcelNumber') parcelNumber: string,
     @Req() request: RequestWithUser,
   ) {
     const { user } = request;
-    return this.ownersService.findManyByParcelNumber(parcelNumber, user);
+    return this.ownersService.findManyByParcelNumber(
+      parcelNumber,
+      user,
+      projectId,
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string, @Req() request: RequestWithUser) {
-    return this.ownersService.findOne(+id);
+  @ApiOkResponse()
+  @Get('ownerId=:ownerId&project=:projectId') // CHANGE ROUTE IN POSTMAN AND TEST ENDPOINT
+  findOne(
+    @Param('projectId') projectId: string,
+    @Param('ownerId') ownerId: string,
+    @Req() request: RequestWithUser,
+  ) {
+    const { user } = request;
+    return this.ownersService.findOne(ownerId, user, projectId);
   }
 
   @Patch(':id')
