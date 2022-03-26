@@ -65,17 +65,22 @@ export class OwnersController {
     return this.ownersService.findOne(ownerId, user, projectId);
   }
 
-  @Patch(':id')
+  @ApiOkResponse()
+  @Patch('ownerId=:ownerId&project=:projectId')
   update(
-    @Param('id') id: string,
+    @Param('projectId') projectId: string,
+    @Param('ownerId') ownerId: string,
     @Body() updateOwnerDto: UpdateOwnerDto,
     @Req() request: RequestWithUser,
   ) {
-    return this.ownersService.update(+id, updateOwnerDto);
+    const { user } = request;
+    return this.ownersService.update(ownerId, updateOwnerDto, user, projectId);
   }
 
+  @ApiOkResponse()
   @Delete(':id')
   remove(@Param('id') id: string, @Req() request: RequestWithUser) {
-    return this.ownersService.remove(+id);
+    const { user } = request;
+    return this.ownersService.remove(id, user);
   }
 }

@@ -170,7 +170,6 @@ export class ParcelsService {
   }
 
   async update(parcelId: string, updateParcelDto: UpdateParcelDto, user: User) {
-    console.log(updateParcelDto);
     const result = await this.repo.parcel.updateMany({
       where: {
         id: parcelId,

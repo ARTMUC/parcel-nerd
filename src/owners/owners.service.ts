@@ -26,6 +26,8 @@ export class OwnersService {
       return { id: parcel.id };
     });
 
+    // throw an Error if some parcels are not found
+
     return this.repo.owner.create({
       data: {
         ...{
@@ -88,13 +90,17 @@ export class OwnersService {
           id: ownerId,
         },
         select: {
+          id: true,
           name: true,
           surname: true,
           streetName: true,
           homeNumber: true,
           city: true,
           postalCode: true,
-          parcels: { where: { projectId }, select: { id: true } },
+          parcels: {
+            where: { projectId },
+            select: { id: true, parcelNumber: true },
+          },
         },
       })
     )[0];
@@ -105,11 +111,49 @@ export class OwnersService {
     return owner;
   }
 
-  update(id: number, updateOwnerDto: UpdateOwnerDto) {
-    return `This action updates a #${id} owner`;
+  async update(
+    ownerId: string,
+    updateOwnerDto: UpdateOwnerDto,
+    user: User,
+    projectId: string,
+  ) {
+    const parcelsIds = (
+      await this.parcelsService.findManyByParcelNumber(
+        user,
+        updateOwnerDto.parcels,
+        projectId,
+      )
+    ).map((parcel) => {
+      return { id: parcel.id };
+    });
+
+    // throw an Error if some parcels are not found
+
+    const result = await this.repo.owner.update({
+      where: {
+        id: ownerId,
+      },
+      data: {
+        ...{ ...updateOwnerDto, parcels: undefined },
+        parcels: {
+          connect: parcelsIds,
+        },
+      },
+    });
+
+    if (!result) {
+      throw new NotFoundException('Parcel not found');
+    }
+
+    return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} owner`;
+  remove(ownerId: string, user: User) {
+    return this.repo.owner.deleteMany({
+      where: {
+        id: ownerId,
+        userId: user.id,
+      },
+    });
   }
 }
