@@ -35,5 +35,5 @@ export class CreateParcelDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  parcelBounds: any; // [{x:number,y:number}] change type
+  parcelBounds: CreateParcelBoundsDto[]; // [{x:number,y:number}] change type
 }

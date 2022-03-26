@@ -8,6 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 import { ParcelsModule } from './parcels/parcels.module';
 import { OwnersModule } from './owners/owners.module';
+import { LinesModule } from './lines/lines.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OwnersModule } from './owners/owners.module';
     UsersModule,
     ParcelsModule,
     OwnersModule,
+    LinesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
