@@ -32,15 +32,17 @@ export class LinesService {
             connect: { id: projectId },
           },
         },
+        include: { lineCoords: true },
       });
     });
   }
 
-  async findAll(user: User) {
+  async findAll(user: User, projectId: string) {
     const owners = await this.repo.line.findMany({
       where: {
         project: {
           userId: user.id,
+          id: projectId,
         },
       },
       include: { lineCoords: true },
@@ -52,19 +54,18 @@ export class LinesService {
   }
 
   async findOne(lineId: string, user: User) {
-    const line = (
-      await this.repo.line.findMany({
-        where: {
-          id: lineId,
-          project: {
-            userId: user.id,
-          },
+    const line = await this.repo.line.findMany({
+      where: {
+        id: lineId,
+        project: {
+          userId: user.id,
         },
-      })
-    )[0];
+      },
+      select: { id: true, title: true, lineCoords: true },
+    });
 
     if (!line) {
-      throw new NotFoundException('Owner not found');
+      throw new NotFoundException('Line not found');
     }
     return line;
   }
@@ -73,39 +74,7 @@ export class LinesService {
     const { title, lineCoords } = updateLineDto;
 
     return this.repo.$transaction(async (repo) => {
-      const resultLine = await repo.line.updateMany({
-        where: {
-          id: lineId,
-          project: {
-            userId: user.id,
-          },
-        },
-        data: { title },
-      });
-
-      const resultLineCoords = await repo.lineCoords.updateMany({
-        where: {
-          id: lineId,
-          line: {
-            project: { userId: user.id },
-          },
-        },
-        data: lineCoords,
-      });
-
-      const result = await Promise.all([resultLine, resultLineCoords]);
-
-      if (result[0].count === 0 || result[1].count === 0) {
-        throw new NotFoundException('Parcel not found');
-      }
-
-      return result;
-    });
-  }
-
-  async remove(lineId: string, user: User) {
-    return await this.repo.$transaction(async (repo) => {
-      const deleteBounds = repo.lineCoords.deleteMany({
+      const deleteLineCoords = repo.lineCoords.deleteMany({
         where: {
           lineId,
           line: {
@@ -114,7 +83,35 @@ export class LinesService {
         },
       });
 
-      const deleteParcel = repo.line.deleteMany({
+      const updateLine = repo.line.update({
+        where: {
+          id: lineId,
+        },
+        data: {
+          title,
+          lineCoords: {
+            create: [...lineCoords],
+          },
+        },
+        include: { lineCoords: true },
+      });
+
+      return await Promise.all([deleteLineCoords, updateLine]);
+    });
+  }
+
+  async remove(lineId: string, user: User) {
+    return await this.repo.$transaction(async (repo) => {
+      const deleteLineCoords = repo.lineCoords.deleteMany({
+        where: {
+          lineId,
+          line: {
+            project: { userId: user.id },
+          },
+        },
+      });
+
+      const deleteLine = repo.line.deleteMany({
         where: {
           id: lineId,
           project: {
@@ -123,7 +120,7 @@ export class LinesService {
         },
       });
 
-      const result = await Promise.all([deleteBounds, deleteParcel]);
+      const result = await Promise.all([deleteLine, deleteLineCoords]);
 
       if (result[0].count === 0 || result[1].count === 0) {
         throw new NotFoundException('Line not found');
