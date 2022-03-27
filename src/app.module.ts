@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { ParcelsModule } from './parcels/parcels.module';
 import { OwnersModule } from './owners/owners.module';
 import { LinesModule } from './lines/lines.module';
+import { CoordinatesConverterModule } from './coordinates-converter/coordinates-converter.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LinesModule } from './lines/lines.module';
     ParcelsModule,
     OwnersModule,
     LinesModule,
+    CoordinatesConverterModule,
   ],
   controllers: [AppController],
   providers: [AppService],
