@@ -39,37 +39,43 @@ export class LinesService {
             connect: { id: projectId },
           },
         },
-        include: { lineCoords: true },
+        include: { lineCoords: { select: { x: true, y: true } } },
       });
     });
   }
 
   async findAll(user: User, projectId: string) {
-    const owners = await this.repo.line.findMany({
+    const lines = await this.repo.line.findMany({
       where: {
         project: {
           userId: user.id,
           id: projectId,
         },
       },
-      include: { lineCoords: true },
+      include: { lineCoords: { select: { x: true, y: true } } },
     });
-    if (owners.length < 1) {
+    if (lines.length < 1) {
       throw new NotFoundException('Owners not found');
     }
-    return owners;
+    return lines;
   }
 
   async findOne(lineId: string, user: User) {
-    const line = await this.repo.line.findMany({
-      where: {
-        id: lineId,
-        project: {
-          userId: user.id,
+    const line = (
+      await this.repo.line.findMany({
+        where: {
+          id: lineId,
+          project: {
+            userId: user.id,
+          },
         },
-      },
-      select: { id: true, title: true, lineCoords: true },
-    });
+        select: {
+          id: true,
+          title: true,
+          lineCoords: { select: { x: true, y: true } },
+        },
+      })
+    )[0];
 
     if (!line) {
       throw new NotFoundException('Line not found');
@@ -100,7 +106,7 @@ export class LinesService {
             create: [...lineCoords],
           },
         },
-        include: { lineCoords: true },
+        include: { lineCoords: { select: { x: true, y: true } } },
       });
 
       return await Promise.all([deleteLineCoords, updateLine]);
