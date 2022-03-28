@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { CoordinatesConverterService } from 'src/coordinates-converter/coordinates-converter.service';
 import { ProjectsService } from 'src/projects/projects.service';
 import { CreateLineDto } from './dto/create-line.dto';
 import { UpdateLineDto } from './dto/update-line.dto';
@@ -10,10 +11,16 @@ export class LinesService {
   constructor(
     private readonly repo: PrismaService,
     private readonly projectsService: ProjectsService,
+    private readonly coordinatesConverterService: CoordinatesConverterService,
   ) {}
 
   create(createLineDto: CreateLineDto, user: User, projectId: string) {
     const { title, lineCoords } = createLineDto;
+
+    const convertedLineCoords = this.coordinatesConverterService.convertToDeg(
+      lineCoords,
+      'EPSG:2177',
+    );
 
     return this.repo.$transaction(async (repo) => {
       const project = await this.projectsService.findOne(projectId, user);
@@ -26,7 +33,7 @@ export class LinesService {
         data: {
           title,
           lineCoords: {
-            create: [...lineCoords],
+            create: [...convertedLineCoords],
           },
           project: {
             connect: { id: projectId },
