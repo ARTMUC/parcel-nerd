@@ -50,15 +50,6 @@ export class ParcelsController {
     return this.parcelsService.findOne(id, user);
   }
 
-  // ************* TO DO LATER *******************
-  // - ADDING PARCEL BY ID
-
-  // @Post()
-  // create(@Body() createParcelDto: CreateParcelDto) {
-  //   return this.parcelsService.create(createParcelDto);
-  // }
-  // **********************************************
-
   @ApiOkResponse()
   @Patch(':id')
   update(

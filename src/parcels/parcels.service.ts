@@ -1,6 +1,3 @@
-// **************** TEST WHAT HAPPENS WITH OWNERS ON DELETE, UPDATE, CREATE ****************************
-// IF WE ALREADY HAVE OWNERS FOR THIS PARCEL IN DB I WOULD LIKE TO JUST UPDATE THEM <- ITS NOT POSSIBLE TO HAVE OWNERS WITHOUT PARCELS. AFTER ADDING OWNER THAT HAS PARCEL NOT EXISTING IN THE DB, OWNERS SERVICE WILL CALL PARCELS SERVICE TO ADD PARCEL BY PARCEL NUMBER
-
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
@@ -22,8 +19,6 @@ export class ParcelsService {
     user: User,
     createParcelByXYDto: CreateParcelByXYDto,
   ): Promise<Parcel> {
-    // TODO: CHACK FIRST IF THIS PARCEL ALREADY EXISTS NOT TO CREATE DUBLES
-
     const { parcelNumber, voivodeship, county, commune, parcelBounds } =
       await this.parcelDataGetterService.fetchParcelDataByXY(
         createParcelByXYDto,
@@ -57,15 +52,11 @@ export class ParcelsService {
     });
   }
 
-  //************************THIS METHOD IS NOT USED ANYWHERE********************************/
-  /*****************************************************************************************/
   async createByParcelNumber(
     projectId: string,
     user: User,
     parcelNo: string,
   ): Promise<Parcel> {
-    // TODO: CHACK FIRST IF THIS PARCEL ALREADY EXISTS NOT TO CREATE DUBLES
-
     const { parcelNumber, voivodeship, county, commune, parcelBounds } =
       await this.parcelDataGetterService.fetchParcelDataByParcelNumber(
         parcelNo,
@@ -98,7 +89,6 @@ export class ParcelsService {
       });
     });
   }
-  //*********************************************************************************************** */
 
   async findAll(user: User) {
     const parcels = await this.repo.parcel.findMany({
@@ -112,7 +102,7 @@ export class ParcelsService {
     });
     if (parcels.length < 1) {
       throw new NotFoundException('Parcel not found');
-    } // do we really need this error ???
+    }
     return parcels;
   }
 
@@ -121,29 +111,7 @@ export class ParcelsService {
     parcels: string[],
     projectId: string,
   ) {
-    //*********************************************************** */
-    // TODO: IT WOULD BE GOOD TO ADD INFO ABOUT PARCEL NUMBERS THAT WE DID NOT FIND IN THE DB
-
-    //****************************************************************** */
-    // const existingParcelsNumbers = existingParcelsData.map(
-    //   (parcel) => parcel.parcelNumber,
-    // );
-
-    // const newParcelsNumbers = createOwnerDto.parcels.filter(
-    //   (el) => !existingParcelsNumbers.includes(el),
-    // );
-
-    // const newParcelsRequest = newParcelsNumbers.map(async (parcelNo) => {
-    //   return await this.parcelDataGetterService.fetchParcelDataByParcelNumber(
-    //     parcelNo,
-    //   );
-    // });
-    // const newParcelsData = await Promise.all(newParcelsRequest);
-
-    //************************************************************** */
-
     return await this.repo.parcel.findMany({
-      // distinct: ['parcelNumber'],
       where: {
         userId: user.id,
         parcelNumber: { in: parcels },

@@ -55,7 +55,7 @@ export class OwnersController {
   }
 
   @ApiOkResponse()
-  @Get('ownerId=:ownerId&project=:projectId') // CHANGE ROUTE IN POSTMAN AND TEST ENDPOINT
+  @Get('ownerId=:ownerId&project=:projectId')
   findOne(
     @Param('projectId') projectId: string,
     @Param('ownerId') ownerId: string,

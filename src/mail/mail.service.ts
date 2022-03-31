@@ -15,8 +15,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       // to: user.email,
-      to: 'artmuc911@gmail.com',
-      // from: '"Support Team" <support@example.com>', // override default from
+      to: 'artmuc911@gmail.com', // for testing only
       subject: 'Welcome to CookBook! Confirm your Email',
       text: confirmationEmailText,
       html: confirmationEmailHTML,

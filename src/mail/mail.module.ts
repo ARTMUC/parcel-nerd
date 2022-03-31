@@ -10,11 +10,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: configService.get('EMAIL_SERVER'), // hostname
-          secureConnection: false, // TLS requires secureConnection to be false
-          port: 587, // port for secure SMTP
+          host: configService.get('EMAIL_SERVER'),
+          secureConnection: false,
+          port: 587,
           tls: {
-            rejectUnauthorized: false, // DEVELOPMENT ONLY
+            rejectUnauthorized: false,
           },
           auth: {
             user: configService.get('EMAIL_LOGIN'),

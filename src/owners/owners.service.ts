@@ -26,8 +26,6 @@ export class OwnersService {
       return { id: parcel.id };
     });
 
-    // throw an Error if some parcels are not found
-
     return this.repo.owner.create({
       data: {
         ...{
@@ -126,8 +124,6 @@ export class OwnersService {
     ).map((parcel) => {
       return { id: parcel.id };
     });
-
-    // throw an Error if some parcels are not found
 
     const result = await this.repo.owner.update({
       where: {

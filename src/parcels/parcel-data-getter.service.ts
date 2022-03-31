@@ -47,10 +47,7 @@ export class ParcelDataGetterService {
     }
 
     const r = /(([\d.]+)\s+([\d.]+))/g;
-    // const parcelBounds = [...geom.matchAll(r)].map((d) => [+d[3], +d[2]]) as [
-    //   number,
-    //   number,
-    // ][];
+
     const parcelBounds = [...geom.matchAll(r)].map((d) => {
       const x = +d[3];
       const y = +d[2];
