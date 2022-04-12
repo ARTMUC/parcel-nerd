@@ -13,14 +13,15 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
+import { ProjectResponse } from './dto/project-responce.dto';
 
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
-  @ApiOkResponse()
+  @ApiCreatedResponse({ type: ProjectResponse })
   @UseGuards(JwtAuthenticationGuard)
   @Post()
   create(
@@ -31,7 +32,7 @@ export class ProjectsController {
     return this.projectsService.create(createProjectDto, user);
   }
 
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [ProjectResponse] })
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   findAll(@Req() request: RequestWithUser) {

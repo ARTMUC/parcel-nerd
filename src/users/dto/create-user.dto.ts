@@ -19,4 +19,4 @@ export class CreateUserDto {
   emailConfirmationToken: string;
 }
 
-export default CreateUserDto;
+
