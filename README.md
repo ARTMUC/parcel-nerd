@@ -1,3 +1,15 @@
+# :construction: THIS APP IS UNDER CONSTRUCTION :construction:
+
+## :fire: PLEASE VISIT http://localhost:3000/api/ to get all routes documentation :fire:
+
+## WHAT YOU CAN DO WITH IT?
+- It's a CRUD app on the maps. 
+- You'll be able to add Parcels (lots) based on coordinates from the map (onClick).
+- You'll be able to add Owners to given Parcels. 
+- Make Notes on the map and reassign them to given Parcel or Owner.
+- Add Polilynes based on XY coordinates in any coordinates system existing in Poland.
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
