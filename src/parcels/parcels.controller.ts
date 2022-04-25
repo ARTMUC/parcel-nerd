@@ -35,11 +35,14 @@ export class ParcelsController {
   }
 
   @ApiOkResponse()
-  @Get()
-  findAll(@Req() request: RequestWithUser) {
+  @Get(':projectId')
+  findAll(
+    @Param('projectId') projectId: string,
+    @Req() request: RequestWithUser,
+  ) {
     const { user } = request;
 
-    return this.parcelsService.findAll(user);
+    return this.parcelsService.findAll(user, projectId);
   }
 
   @ApiOkResponse()

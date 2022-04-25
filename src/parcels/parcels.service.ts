@@ -90,10 +90,11 @@ export class ParcelsService {
     });
   }
 
-  async findAll(user: User) {
+  async findAll(user: User, projectId: string) {
     const parcels = await this.repo.parcel.findMany({
       where: {
         userId: user.id,
+        projectId,
       },
       include: {
         parcelBounds: true,

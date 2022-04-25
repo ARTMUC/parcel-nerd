@@ -2,6 +2,6 @@ import { Request } from 'express';
 
 import { Prisma } from '@prisma/client';
 
-interface User extends Prisma.UserGetPayload<{}> {}
+type User = Prisma.UserGetPayload<{}>;
 
 export default User;
