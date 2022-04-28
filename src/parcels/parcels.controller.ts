@@ -22,7 +22,7 @@ import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
-  @ApiOkResponse()
+  @ApiOkResponse({ type: CreateParcelDto })
   @Post('getParcelByXY/:projectId')
   async createByXY(
     @Param('projectId') projectId: string,
@@ -34,7 +34,7 @@ export class ParcelsController {
     return this.parcelsService.createByXY(projectId, user, createParcelByXYDto);
   }
 
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [CreateParcelDto] })
   @Get(':projectId')
   findAll(
     @Param('projectId') projectId: string,

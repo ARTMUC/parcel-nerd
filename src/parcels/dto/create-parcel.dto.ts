@@ -33,7 +33,7 @@ export class CreateParcelDto {
   @IsNotEmpty()
   class?: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: [CreateParcelBoundsDto] })
   @IsNotEmpty()
   parcelBounds: CreateParcelBoundsDto[];
 }
