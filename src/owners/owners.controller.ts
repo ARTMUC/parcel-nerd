@@ -15,6 +15,7 @@ import { UpdateOwnerDto } from './dto/update-owner.dto';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
 import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 import { ApiOkResponse } from '@nestjs/swagger';
+import { OwnerResponse } from './dto/response-owner.dto';
 
 @UseGuards(JwtAuthenticationGuard)
 @Controller('owners')
@@ -32,11 +33,14 @@ export class OwnersController {
     return this.ownersService.create(createOwnerDto, user, projectId);
   }
 
-  @ApiOkResponse()
-  @Get()
-  findAll(@Req() request: RequestWithUser) {
+  @ApiOkResponse({ type: [OwnerResponse] })
+  @Get(':projectId')
+  findAll(
+    @Param('projectId') projectId: string,
+    @Req() request: RequestWithUser,
+  ) {
     const { user } = request;
-    return this.ownersService.findAll(user);
+    return this.ownersService.findAll(user, projectId);
   }
 
   @ApiOkResponse()

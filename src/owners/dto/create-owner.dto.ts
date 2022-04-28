@@ -14,26 +14,21 @@ export class CreateOwnerDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   streetName?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   homeNumber?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   city?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   postalCode?: string;
 
   @ApiProperty()
   @IsArray()
-  @IsNotEmpty()
   parcels?: string[];
 }

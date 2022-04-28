@@ -42,10 +42,11 @@ export class OwnersService {
     });
   }
 
-  async findAll(user: User) {
+  async findAll(user: User, projectId: string) {
     const owners = await this.repo.owner.findMany({
       where: {
         userId: user.id,
+        projectId,
       },
       include: { parcels: { select: { parcelNumber: true, id: true } } },
     });

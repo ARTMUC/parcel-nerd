@@ -42,6 +42,7 @@ model Project {
   userId  String
   lines   Line[]
   parcels Parcel[]
+  owners  Owner[]
 }
 
 model Line {
@@ -95,4 +96,6 @@ model Owner {
   parcels    Parcel[]
   user       User?    @relation(fields: [userId], references: [id])
   userId     String?
+  project    Project? @relation(fields: [projectId], references: [id])
+  projectId  String?
 }
