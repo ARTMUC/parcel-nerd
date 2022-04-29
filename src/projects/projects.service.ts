@@ -1,12 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { PrismaService } from 'prisma/prisma.service';
-import { User } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly repo: PrismaService) {}
+  constructor(@Inject('PRISMA_SERVICE') private repo: PrismaClient) {}
 
   create(createProjectDto: CreateProjectDto, user: User) {
     return this.repo.project.create({

@@ -1,11 +1,40 @@
 import { Module } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { PrismaService } from './prisma.service';
+
+const prisma = new PrismaClient({
+  log: [
+    {
+      emit: 'event',
+      level: 'query',
+    },
+    {
+      emit: 'stdout',
+      level: 'error',
+    },
+    {
+      emit: 'stdout',
+      level: 'info',
+    },
+    {
+      emit: 'stdout',
+      level: 'warn',
+    },
+  ],
+});
+
+prisma.$on('query', (e) => {
+  console.log('Query: ' + e.query);
+  console.log('Params: ' + e.params);
+  console.log('Duration: ' + e.duration + 'ms');
+});
 
 @Module({
-  imports: [],
-  controllers: [],
-  providers: [PrismaService, PrismaClient],
-  exports: [PrismaService, PrismaClient],
+  providers: [
+    {
+      provide: 'PRISMA_SERVICE',
+      useValue: prisma,
+    },
+  ],
+  exports: ['PRISMA_SERVICE'],
 })
 export class PrismaModule {}

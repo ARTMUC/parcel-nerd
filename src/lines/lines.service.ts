@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { PrismaService } from 'prisma/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaClient, User } from '@prisma/client';
 import { CoordinatesConverterService } from 'src/coordinates-converter/coordinates-converter.service';
 import { ProjectsService } from 'src/projects/projects.service';
 import { CreateLineDto } from './dto/create-line.dto';
@@ -9,7 +8,7 @@ import { UpdateLineDto } from './dto/update-line.dto';
 @Injectable()
 export class LinesService {
   constructor(
-    private readonly repo: PrismaService,
+    @Inject('PRISMA_SERVICE') private repo: PrismaClient,
     private readonly projectsService: ProjectsService,
     private readonly coordinatesConverterService: CoordinatesConverterService,
   ) {}

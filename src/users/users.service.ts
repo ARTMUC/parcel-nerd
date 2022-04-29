@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly repo: PrismaService) {}
+  constructor(@Inject('PRISMA_SERVICE') private repo: PrismaClient) {}
 
   async checkIfUserExists(email: string) {
     const user = await this.repo.user.findUnique({ where: { email } });

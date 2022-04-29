@@ -1,15 +1,19 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
-import { PrismaService } from 'prisma/prisma.service';
-import { User, Parcel } from '@prisma/client';
+import { User, Parcel, PrismaClient } from '@prisma/client';
 import { ProjectsService } from 'src/projects/projects.service';
 import { ParcelDataGetterService } from './parcel-data-getter.service';
 
 @Injectable()
 export class ParcelsService {
   constructor(
-    private readonly repo: PrismaService,
+    @Inject('PRISMA_SERVICE') private repo: PrismaClient,
     private readonly projectsService: ProjectsService,
     private readonly parcelDataGetterService: ParcelDataGetterService,
   ) {}
