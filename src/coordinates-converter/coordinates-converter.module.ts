@@ -3,6 +3,6 @@ import { CoordinatesConverterService } from './coordinates-converter.service';
 
 @Module({
   providers: [CoordinatesConverterService],
-  exports: [CoordinatesConverterService],
+  exports: [CoordinatesConverterService]
 })
 export class CoordinatesConverterModule {}

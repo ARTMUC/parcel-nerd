@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ParcelsService } from './parcels.service';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
@@ -27,7 +17,7 @@ export class ParcelsController {
   async createByXY(
     @Param('projectId') projectId: string,
     @Body() createParcelByXYDto: CreateParcelByXYDto,
-    @Req() request: RequestWithUser,
+    @Req() request: RequestWithUser
   ) {
     const { user } = request;
 
@@ -36,10 +26,7 @@ export class ParcelsController {
 
   @ApiOkResponse({ type: [CreateParcelDto] })
   @Get(':projectId')
-  findAll(
-    @Param('projectId') projectId: string,
-    @Req() request: RequestWithUser,
-  ) {
+  findAll(@Param('projectId') projectId: string, @Req() request: RequestWithUser) {
     const { user } = request;
 
     return this.parcelsService.findAll(user, projectId);
@@ -55,11 +42,7 @@ export class ParcelsController {
 
   @ApiOkResponse()
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateParcelDto: UpdateParcelDto,
-    @Req() request: RequestWithUser,
-  ) {
+  update(@Param('id') id: string, @Body() updateParcelDto: UpdateParcelDto, @Req() request: RequestWithUser) {
     const { user } = request;
 
     return this.parcelsService.update(id, updateParcelDto, user);

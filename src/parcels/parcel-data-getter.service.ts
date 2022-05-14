@@ -10,7 +10,7 @@ export class ParcelDataGetterService {
     const { x, y } = createParcelByXYDto;
 
     const res = await fetch(
-      `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${y},${x},4326&result=id,voivodeship,county,commune,geom_wkt&srid=4326`,
+      `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${y},${x},4326&result=id,voivodeship,county,commune,geom_wkt&srid=4326`
     );
 
     const data = await res.text();
@@ -19,7 +19,7 @@ export class ParcelDataGetterService {
   }
   async fetchParcelDataByParcelNumber(parcelNo: string) {
     const res = await fetch(
-      `https://uldk.gugik.gov.pl/?request=GetParcelById&id=${parcelNo}&result=id,voivodeship,county,commune,geom_wkt&srid=4326`,
+      `https://uldk.gugik.gov.pl/?request=GetParcelById&id=${parcelNo}&result=id,voivodeship,county,commune,geom_wkt&srid=4326`
     );
 
     const data = await res.text();
@@ -29,21 +29,13 @@ export class ParcelDataGetterService {
 
   private extractParcelData(data, iden) {
     if (data.substr(0, 1) !== '0') {
-      throw new HttpException(
-        `Please check input request. Problem getting parcel ${iden}`,
-        400,
-      );
+      throw new HttpException(`Please check input request. Problem getting parcel ${iden}`, 400);
     }
 
-    const [parcelNumber, voivodeship, county, commune, geom] = data
-      .split('\n')[1]
-      .split('|');
+    const [parcelNumber, voivodeship, county, commune, geom] = data.split('\n')[1].split('|');
 
     if (!parcelNumber || !voivodeship || !county || !commune || !geom) {
-      throw new HttpException(
-        `Please check input request. Problem getting parcel ${iden}`,
-        400,
-      );
+      throw new HttpException(`Please check input request. Problem getting parcel ${iden}`, 400);
     }
 
     const r = /(([\d.]+)\s+([\d.]+))/g;
@@ -59,7 +51,7 @@ export class ParcelDataGetterService {
       voivodeship,
       county,
       commune,
-      parcelBounds,
+      parcelBounds
     } as FetchedParcelData;
   }
 }

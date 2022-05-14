@@ -14,20 +14,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           secureConnection: false,
           port: 587,
           tls: {
-            rejectUnauthorized: false,
+            rejectUnauthorized: false
           },
           auth: {
             user: configService.get('EMAIL_LOGIN'),
-            pass: configService.get('EMAIL_PASSWORD'),
-          },
+            pass: configService.get('EMAIL_PASSWORD')
+          }
         },
         defaults: {
-          from: configService.get('EMAIL_FROM'),
-        },
-      }),
-    }),
+          from: configService.get('EMAIL_FROM')
+        }
+      })
+    })
   ],
   providers: [MailService],
-  exports: [MailService],
+  exports: [MailService]
 })
 export class MailModule {}

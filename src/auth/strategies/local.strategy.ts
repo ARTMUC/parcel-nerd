@@ -8,7 +8,7 @@ import { User } from '@prisma/client';
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private authenticationService: AuthService) {
     super({
-      usernameField: 'email',
+      usernameField: 'email'
     });
   }
   async validate(email: string, password: string): Promise<User> {

@@ -1,5 +1,3 @@
-
-  export class ConnectLineCoordsDto {
-    id: string;
-  }
-  
+export class ConnectLineCoordsDto {
+  id: string;
+}

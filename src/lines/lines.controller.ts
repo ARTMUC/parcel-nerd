@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { LinesService } from './lines.service';
 import { CreateLineDto } from './dto/create-line.dto';
 import { UpdateLineDto } from './dto/update-line.dto';
@@ -23,20 +13,13 @@ export class LinesController {
 
   @ApiOkResponse()
   @Post('project=:projectId')
-  create(
-    @Body() createLineDto: CreateLineDto,
-    @Param('projectId') projectId: string,
-    @Req() request: RequestWithUser,
-  ) {
+  create(@Body() createLineDto: CreateLineDto, @Param('projectId') projectId: string, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.linesService.create(createLineDto, user, projectId);
   }
 
   @Get('project=:projectId')
-  findAll(
-    @Req() request: RequestWithUser,
-    @Param('projectId') projectId: string,
-  ) {
+  findAll(@Req() request: RequestWithUser, @Param('projectId') projectId: string) {
     const { user } = request;
     return this.linesService.findAll(user, projectId);
   }
@@ -48,11 +31,7 @@ export class LinesController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateLineDto: UpdateLineDto,
-    @Req() request: RequestWithUser,
-  ) {
+  update(@Param('id') id: string, @Body() updateLineDto: UpdateLineDto, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.linesService.update(id, user, updateLineDto);
   }

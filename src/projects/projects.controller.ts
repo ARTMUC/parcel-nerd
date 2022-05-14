@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -24,10 +14,7 @@ export class ProjectsController {
   @ApiCreatedResponse({ type: ProjectResponse })
   @UseGuards(JwtAuthenticationGuard)
   @Post()
-  create(
-    @Body() createProjectDto: CreateProjectDto,
-    @Req() request: RequestWithUser,
-  ) {
+  create(@Body() createProjectDto: CreateProjectDto, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.projectsService.create(createProjectDto, user);
   }
@@ -51,11 +38,7 @@ export class ProjectsController {
   @ApiOkResponse()
   @UseGuards(JwtAuthenticationGuard)
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateProjectDto: UpdateProjectDto,
-    @Req() request: RequestWithUser,
-  ) {
+  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.projectsService.update(id, updateProjectDto, user);
   }

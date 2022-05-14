@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
 import { User, Parcel, PrismaClient } from '@prisma/client';
@@ -15,18 +10,12 @@ export class ParcelsService {
   constructor(
     @Inject('PRISMA_SERVICE') private repo: PrismaClient,
     private readonly projectsService: ProjectsService,
-    private readonly parcelDataGetterService: ParcelDataGetterService,
+    private readonly parcelDataGetterService: ParcelDataGetterService
   ) {}
 
-  async createByXY(
-    projectId: string,
-    user: User,
-    createParcelByXYDto: CreateParcelByXYDto,
-  ): Promise<Parcel> {
+  async createByXY(projectId: string, user: User, createParcelByXYDto: CreateParcelByXYDto): Promise<Parcel> {
     const { parcelNumber, voivodeship, county, commune, parcelBounds } =
-      await this.parcelDataGetterService.fetchParcelDataByXY(
-        createParcelByXYDto,
-      );
+      await this.parcelDataGetterService.fetchParcelDataByXY(createParcelByXYDto);
 
     return this.repo.$transaction(async (repo) => {
       const project = await this.projectsService.findOne(projectId, user);
@@ -42,29 +31,23 @@ export class ParcelsService {
           county,
           commune,
           project: {
-            connect: { id: projectId },
+            connect: { id: projectId }
           },
           user: {
-            connect: { id: user.id },
+            connect: { id: user.id }
           },
           parcelBounds: {
-            create: parcelBounds,
-          },
+            create: parcelBounds
+          }
         },
-        include: { parcelBounds: { select: { x: true, y: true } } },
+        include: { parcelBounds: { select: { x: true, y: true } } }
       });
     });
   }
 
-  async createByParcelNumber(
-    projectId: string,
-    user: User,
-    parcelNo: string,
-  ): Promise<Parcel> {
+  async createByParcelNumber(projectId: string, user: User, parcelNo: string): Promise<Parcel> {
     const { parcelNumber, voivodeship, county, commune, parcelBounds } =
-      await this.parcelDataGetterService.fetchParcelDataByParcelNumber(
-        parcelNo,
-      );
+      await this.parcelDataGetterService.fetchParcelDataByParcelNumber(parcelNo);
 
     return this.repo.$transaction(async (repo) => {
       const project = await this.projectsService.findOne(projectId, user);
@@ -80,16 +63,16 @@ export class ParcelsService {
           county,
           commune,
           project: {
-            connect: { id: projectId },
+            connect: { id: projectId }
           },
           user: {
-            connect: { id: user.id },
+            connect: { id: user.id }
           },
           parcelBounds: {
-            create: parcelBounds,
-          },
+            create: parcelBounds
+          }
         },
-        include: { parcelBounds: { select: { x: true, y: true } } },
+        include: { parcelBounds: { select: { x: true, y: true } } }
       });
     });
   }
@@ -98,12 +81,12 @@ export class ParcelsService {
     const parcels = await this.repo.parcel.findMany({
       where: {
         userId: user.id,
-        projectId,
+        projectId
       },
       include: {
         parcelBounds: true,
-        owners: { select: { name: true, surname: true, id: true } },
-      },
+        owners: { select: { name: true, surname: true, id: true } }
+      }
     });
     if (parcels.length < 1) {
       throw new NotFoundException('Parcel not found');
@@ -111,17 +94,13 @@ export class ParcelsService {
     return parcels;
   }
 
-  async findManyByParcelNumber(
-    user: User,
-    parcels: string[],
-    projectId: string,
-  ) {
+  async findManyByParcelNumber(user: User, parcels: string[], projectId: string) {
     return await this.repo.parcel.findMany({
       where: {
         userId: user.id,
         parcelNumber: { in: parcels },
-        projectId,
-      },
+        projectId
+      }
     });
   }
 
@@ -129,12 +108,12 @@ export class ParcelsService {
     const [parcel] = await this.repo.parcel.findMany({
       where: {
         id,
-        userId: user.id,
+        userId: user.id
       },
       include: {
         parcelBounds: true,
-        owners: true,
-      },
+        owners: true
+      }
     });
     if (!parcel) {
       throw new NotFoundException('Parcel not found');
@@ -146,11 +125,11 @@ export class ParcelsService {
     const result = await this.repo.parcel.updateMany({
       where: {
         id: parcelId,
-        userId: user.id,
+        userId: user.id
       },
       data: {
-        ...updateParcelDto,
-      },
+        ...updateParcelDto
+      }
     });
 
     if (result.count === 0) {
@@ -164,15 +143,15 @@ export class ParcelsService {
     return await this.repo.$transaction(async (repo) => {
       const deleteBounds = repo.parcelBounds.deleteMany({
         where: {
-          parcelId,
-        },
+          parcelId
+        }
       });
 
       const deleteParcel = repo.parcel.deleteMany({
         where: {
           id: parcelId,
-          userId: user.id,
-        },
+          userId: user.id
+        }
       });
 
       const result = await Promise.all([deleteBounds, deleteParcel]);

@@ -21,9 +21,9 @@ import { CoordinatesConverterModule } from './coordinates-converter/coordinates-
     ParcelsModule,
     OwnersModule,
     LinesModule,
-    CoordinatesConverterModule,
+    CoordinatesConverterModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

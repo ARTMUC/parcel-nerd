@@ -11,33 +11,29 @@ export class OwnersService {
   constructor(
     @Inject('PRISMA_SERVICE') private repo: PrismaClient,
     private readonly parcelsService: ParcelsService,
-    private readonly parcelDataGetterService: ParcelDataGetterService,
+    private readonly parcelDataGetterService: ParcelDataGetterService
   ) {}
 
   async create(createOwnerDto: CreateOwnerDto, user: User, projectId: string) {
-    const parcelsIds = (
-      await this.parcelsService.findManyByParcelNumber(
-        user,
-        createOwnerDto.parcels,
-        projectId,
-      )
-    ).map((parcel) => {
-      return { id: parcel.id };
-    });
+    const parcelsIds = (await this.parcelsService.findManyByParcelNumber(user, createOwnerDto.parcels, projectId)).map(
+      (parcel) => {
+        return { id: parcel.id };
+      }
+    );
 
     return this.repo.owner.create({
       data: {
         ...{
           ...createOwnerDto,
-          parcels: undefined,
+          parcels: undefined
         },
         user: {
-          connect: { id: user.id },
+          connect: { id: user.id }
         },
         parcels: {
-          connect: parcelsIds,
-        },
-      },
+          connect: parcelsIds
+        }
+      }
     });
   }
 
@@ -45,9 +41,9 @@ export class OwnersService {
     const owners = await this.repo.owner.findMany({
       where: {
         userId: user.id,
-        projectId,
+        projectId
       },
-      include: { parcels: { select: { parcelNumber: true, id: true } } },
+      include: { parcels: { select: { parcelNumber: true, id: true } } }
     });
     if (owners.length < 1) {
       throw new NotFoundException('Owners not found');
@@ -55,16 +51,12 @@ export class OwnersService {
     return owners;
   }
 
-  async findManyByParcelNumber(
-    parcelNumber: string,
-    user: User,
-    projectId: string,
-  ) {
+  async findManyByParcelNumber(parcelNumber: string, user: User, projectId: string) {
     const owners = await this.repo.parcel.findMany({
       where: {
         userId: user.id,
         parcelNumber,
-        projectId,
+        projectId
       },
 
       select: {
@@ -72,9 +64,9 @@ export class OwnersService {
         id: true,
 
         owners: {
-          select: { id: true, name: true },
-        },
-      },
+          select: { id: true, name: true }
+        }
+      }
     });
 
     return owners;
@@ -85,7 +77,7 @@ export class OwnersService {
       await this.repo.owner.findMany({
         where: {
           userId: user.id,
-          id: ownerId,
+          id: ownerId
         },
         select: {
           id: true,
@@ -97,9 +89,9 @@ export class OwnersService {
           postalCode: true,
           parcels: {
             where: { projectId },
-            select: { id: true, parcelNumber: true },
-          },
-        },
+            select: { id: true, parcelNumber: true }
+          }
+        }
       })
     )[0];
 
@@ -109,32 +101,23 @@ export class OwnersService {
     return owner;
   }
 
-  async update(
-    ownerId: string,
-    updateOwnerDto: UpdateOwnerDto,
-    user: User,
-    projectId: string,
-  ) {
-    const parcelsIds = (
-      await this.parcelsService.findManyByParcelNumber(
-        user,
-        updateOwnerDto.parcels,
-        projectId,
-      )
-    ).map((parcel) => {
-      return { id: parcel.id };
-    });
+  async update(ownerId: string, updateOwnerDto: UpdateOwnerDto, user: User, projectId: string) {
+    const parcelsIds = (await this.parcelsService.findManyByParcelNumber(user, updateOwnerDto.parcels, projectId)).map(
+      (parcel) => {
+        return { id: parcel.id };
+      }
+    );
 
     const result = await this.repo.owner.update({
       where: {
-        id: ownerId,
+        id: ownerId
       },
       data: {
         ...{ ...updateOwnerDto, parcels: undefined },
         parcels: {
-          connect: parcelsIds,
-        },
-      },
+          connect: parcelsIds
+        }
+      }
     });
 
     if (!result) {
@@ -148,8 +131,8 @@ export class OwnersService {
     return this.repo.owner.deleteMany({
       where: {
         id: ownerId,
-        userId: user.id,
-      },
+        userId: user.id
+      }
     });
   }
 }

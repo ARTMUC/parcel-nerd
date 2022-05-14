@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { OwnersService } from './owners.service';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
@@ -27,7 +17,7 @@ export class OwnersController {
   create(
     @Param('projectId') projectId: string,
     @Body() createOwnerDto: CreateOwnerDto,
-    @Req() request: RequestWithUser,
+    @Req() request: RequestWithUser
   ) {
     const { user } = request;
     return this.ownersService.create(createOwnerDto, user, projectId);
@@ -35,10 +25,7 @@ export class OwnersController {
 
   @ApiOkResponse({ type: [OwnerResponse] })
   @Get(':projectId')
-  findAll(
-    @Param('projectId') projectId: string,
-    @Req() request: RequestWithUser,
-  ) {
+  findAll(@Param('projectId') projectId: string, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.ownersService.findAll(user, projectId);
   }
@@ -48,23 +35,15 @@ export class OwnersController {
   findManyByParcelNumber(
     @Param('projectId') projectId: string,
     @Param('parcelNumber') parcelNumber: string,
-    @Req() request: RequestWithUser,
+    @Req() request: RequestWithUser
   ) {
     const { user } = request;
-    return this.ownersService.findManyByParcelNumber(
-      parcelNumber,
-      user,
-      projectId,
-    );
+    return this.ownersService.findManyByParcelNumber(parcelNumber, user, projectId);
   }
 
   @ApiOkResponse()
   @Get('ownerId=:ownerId&project=:projectId')
-  findOne(
-    @Param('projectId') projectId: string,
-    @Param('ownerId') ownerId: string,
-    @Req() request: RequestWithUser,
-  ) {
+  findOne(@Param('projectId') projectId: string, @Param('ownerId') ownerId: string, @Req() request: RequestWithUser) {
     const { user } = request;
     return this.ownersService.findOne(ownerId, user, projectId);
   }
@@ -75,7 +54,7 @@ export class OwnersController {
     @Param('projectId') projectId: string,
     @Param('ownerId') ownerId: string,
     @Body() updateOwnerDto: UpdateOwnerDto,
-    @Req() request: RequestWithUser,
+    @Req() request: RequestWithUser
   ) {
     const { user } = request;
     return this.ownersService.update(ownerId, updateOwnerDto, user, projectId);

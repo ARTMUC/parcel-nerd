@@ -10,4 +10,3 @@ export class UpdateProjectDto {
   @IsString()
   content?: string;
 }
-

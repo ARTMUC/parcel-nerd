@@ -13,7 +13,7 @@ export class RegisterDto {
 
   @ApiProperty({
     minimum: 7,
-    default: 'password1234',
+    default: 'password1234'
   })
   @IsString()
   @IsNotEmpty()

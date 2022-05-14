@@ -8,6 +8,6 @@ import { CoordinatesConverterModule } from 'src/coordinates-converter/coordinate
 @Module({
   imports: [PrismaModule, ProjectsModule, CoordinatesConverterModule],
   controllers: [LinesController],
-  providers: [LinesService],
+  providers: [LinesService]
 })
 export class LinesModule {}

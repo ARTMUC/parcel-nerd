@@ -9,7 +9,7 @@ import {
   Res,
   ClassSerializerInterceptor,
   UseInterceptors,
-  Param,
+  Param
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RegisterDto from './dto/register.dto';
@@ -18,28 +18,18 @@ import { LocalAuthenticationGuard } from './guards/local-auth.guard';
 import { RequestHandler, Response } from 'express';
 import JwtAuthenticationGuard from './guards/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiExtraModels, ApiOkResponse } from '@nestjs/swagger';
 import LoginDto from './dto/login.dto';
 import { UserResponce } from './dto/user-responce.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authenticationService: AuthService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly authenticationService: AuthService, private readonly usersService: UsersService) {}
 
   @ApiCreatedResponse({ type: UserResponce })
   @Post('signup')
   async register(@Body() registrationData: RegisterDto) {
-    const { id, name, email } = await this.authenticationService.signup(
-      registrationData,
-    );
+    const { id, name, email } = await this.authenticationService.signup(registrationData);
     return { id, name, email } as UserResponce;
   }
   @ApiOkResponse()
@@ -65,10 +55,7 @@ export class AuthController {
   @UseGuards(JwtAuthenticationGuard)
   @Post('signout')
   async logOut(@Req() request: RequestWithUser) {
-    request.res.setHeader(
-      'Set-Cookie',
-      this.authenticationService.getCookieForLogOut(),
-    );
+    request.res.setHeader('Set-Cookie', this.authenticationService.getCookieForLogOut());
     return 'you are logged out';
   }
 

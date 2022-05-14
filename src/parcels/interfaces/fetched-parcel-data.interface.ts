@@ -5,5 +5,5 @@ export interface FetchedParcelData {
   voivodeship: string;
   county: string;
   commune: string;
-  parcelBounds: FetchedParcelBounds; 
+  parcelBounds: FetchedParcelBounds;
 }

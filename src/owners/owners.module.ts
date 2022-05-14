@@ -7,6 +7,6 @@ import { ParcelsModule } from 'src/parcels/parcels.module';
 @Module({
   imports: [PrismaModule, ParcelsModule],
   controllers: [OwnersController],
-  providers: [OwnersService],
+  providers: [OwnersService]
 })
 export class OwnersModule {}

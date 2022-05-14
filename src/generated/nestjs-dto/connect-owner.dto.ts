@@ -1,5 +1,3 @@
-
-  export class ConnectOwnerDto {
-    id: string;
-  }
-  
+export class ConnectOwnerDto {
+  id: string;
+}

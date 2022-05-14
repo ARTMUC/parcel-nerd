@@ -1,9 +1,1 @@
-
-
-
-
-
-
-export class CreateOwnersOnProjectsDto {
-  
-}
+export class CreateOwnersOnProjectsDto {}

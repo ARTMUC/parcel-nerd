@@ -12,9 +12,9 @@ export class ProjectsService {
       data: {
         ...createProjectDto,
         user: {
-          connect: { id: user.id },
-        },
-      },
+          connect: { id: user.id }
+        }
+      }
     });
   }
 
@@ -24,11 +24,11 @@ export class ProjectsService {
         id: true,
         title: true,
         content: true,
-        userId: true,
+        userId: true
       },
       where: {
-        userId: user.id,
-      },
+        userId: user.id
+      }
     });
   }
 
@@ -38,12 +38,12 @@ export class ProjectsService {
         id: true,
         title: true,
         content: true,
-        userId: true,
+        userId: true
       },
       where: {
         id,
-        userId: user.id,
-      },
+        userId: user.id
+      }
     });
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -56,8 +56,8 @@ export class ProjectsService {
       data: updateProjectDto,
       where: {
         id,
-        userId: user.id,
-      },
+        userId: user.id
+      }
     });
   }
 
@@ -65,8 +65,8 @@ export class ProjectsService {
     return this.repo.project.deleteMany({
       where: {
         id,
-        userId: user.id,
-      },
+        userId: user.id
+      }
     });
   }
 }

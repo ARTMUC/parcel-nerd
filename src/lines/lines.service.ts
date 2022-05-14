@@ -10,16 +10,13 @@ export class LinesService {
   constructor(
     @Inject('PRISMA_SERVICE') private repo: PrismaClient,
     private readonly projectsService: ProjectsService,
-    private readonly coordinatesConverterService: CoordinatesConverterService,
+    private readonly coordinatesConverterService: CoordinatesConverterService
   ) {}
 
   create(createLineDto: CreateLineDto, user: User, projectId: string) {
     const { title, lineCoords } = createLineDto;
 
-    const convertedLineCoords = this.coordinatesConverterService.convertToDeg(
-      lineCoords,
-      'EPSG:2177',
-    );
+    const convertedLineCoords = this.coordinatesConverterService.convertToDeg(lineCoords, 'EPSG:2177');
 
     return this.repo.$transaction(async (repo) => {
       const project = await this.projectsService.findOne(projectId, user);
@@ -32,13 +29,13 @@ export class LinesService {
         data: {
           title,
           lineCoords: {
-            create: [...convertedLineCoords],
+            create: [...convertedLineCoords]
           },
           project: {
-            connect: { id: projectId },
-          },
+            connect: { id: projectId }
+          }
         },
-        include: { lineCoords: { select: { x: true, y: true } } },
+        include: { lineCoords: { select: { x: true, y: true } } }
       });
     });
   }
@@ -48,10 +45,10 @@ export class LinesService {
       where: {
         project: {
           userId: user.id,
-          id: projectId,
-        },
+          id: projectId
+        }
       },
-      include: { lineCoords: { select: { x: true, y: true } } },
+      include: { lineCoords: { select: { x: true, y: true } } }
     });
     if (lines.length < 1) {
       throw new NotFoundException('Owners not found');
@@ -65,14 +62,14 @@ export class LinesService {
         where: {
           id: lineId,
           project: {
-            userId: user.id,
-          },
+            userId: user.id
+          }
         },
         select: {
           id: true,
           title: true,
-          lineCoords: { select: { x: true, y: true } },
-        },
+          lineCoords: { select: { x: true, y: true } }
+        }
       })
     )[0];
 
@@ -90,22 +87,22 @@ export class LinesService {
         where: {
           lineId,
           line: {
-            project: { userId: user.id },
-          },
-        },
+            project: { userId: user.id }
+          }
+        }
       });
 
       const updateLine = repo.line.update({
         where: {
-          id: lineId,
+          id: lineId
         },
         data: {
           title,
           lineCoords: {
-            create: [...lineCoords],
-          },
+            create: [...lineCoords]
+          }
         },
-        include: { lineCoords: { select: { x: true, y: true } } },
+        include: { lineCoords: { select: { x: true, y: true } } }
       });
 
       return await Promise.all([deleteLineCoords, updateLine]);
@@ -118,18 +115,18 @@ export class LinesService {
         where: {
           lineId,
           line: {
-            project: { userId: user.id },
-          },
-        },
+            project: { userId: user.id }
+          }
+        }
       });
 
       const deleteLine = repo.line.deleteMany({
         where: {
           id: lineId,
           project: {
-            userId: user.id,
-          },
-        },
+            userId: user.id
+          }
+        }
       });
 
       const result = await Promise.all([deleteLine, deleteLineCoords]);

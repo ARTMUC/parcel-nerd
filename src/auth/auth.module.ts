@@ -12,14 +12,8 @@ import { MailService } from 'src/mail/mail.service';
 import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [
-    MailModule,
-    UsersModule,
-    PassportModule,
-    ConfigModule,
-    JwtModule.register({}),
-  ],
+  imports: [MailModule, UsersModule, PassportModule, ConfigModule, JwtModule.register({})],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  controllers: [AuthController],
+  controllers: [AuthController]
 })
 export class AuthModule {}

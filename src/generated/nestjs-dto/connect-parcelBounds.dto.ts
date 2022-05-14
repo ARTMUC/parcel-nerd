@@ -1,5 +1,3 @@
-
-  export class ConnectParcelBoundsDto {
-    id: number;
-  }
-  
+export class ConnectParcelBoundsDto {
+  id: number;
+}

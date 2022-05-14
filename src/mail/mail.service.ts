@@ -17,7 +17,7 @@ export class MailService {
       to: 'artmuc911@gmail.com', // for testing only
       subject: 'Welcome to CookBook! Confirm your Email',
       text: confirmationEmailText,
-      html: confirmationEmailHTML,
+      html: confirmationEmailHTML
     });
   }
 }

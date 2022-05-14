@@ -16,15 +16,12 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this email does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
   async create(userData: CreateUserDto) {
     const newUser = await this.repo.user.create({
-      data: userData,
+      data: userData
     });
     return newUser;
   }
@@ -33,20 +30,17 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this id does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
   async setConfirmUserEmail(userId: string) {
     return await this.repo.user.update({
       data: {
-        isEmailConfirmed: true,
+        isEmailConfirmed: true
       },
       where: {
-        id: userId,
-      },
+        id: userId
+      }
     });
   }
 }

@@ -14,18 +14,12 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly mailService: MailService,
+    private readonly mailService: MailService
   ) {}
 
   async signup(registrationData: RegisterDto) {
-    const user = await this.usersService.checkIfUserExists(
-      registrationData.email,
-    );
-    if (user)
-      throw new HttpException(
-        'User with that email already exists',
-        HttpStatus.BAD_REQUEST,
-      );
+    const user = await this.usersService.checkIfUserExists(registrationData.email);
+    if (user) throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
 
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     const emailConfirmationToken = uuid();
@@ -33,7 +27,7 @@ export class AuthService {
     const createdUser = await this.usersService.create({
       ...registrationData,
       password: hashedPassword,
-      emailConfirmationToken,
+      emailConfirmationToken
     });
     await this.mailService.sendUserConfirmationEmail(createdUser);
 
@@ -42,22 +36,12 @@ export class AuthService {
 
   public async getAuthenticatedUser(email: string, plainPassword: string) {
     const user = await this.usersService.getByEmail(email);
-    const isPasswordMatching = await bcrypt.compare(
-      plainPassword,
-      user.password,
-    );
+    const isPasswordMatching = await bcrypt.compare(plainPassword, user.password);
 
     if (!isPasswordMatching) {
-      throw new HttpException(
-        'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
     }
-    if (!user.isEmailConfirmed)
-      throw new HttpException(
-        'Please confirm your email first',
-        HttpStatus.BAD_REQUEST,
-      );
+    if (!user.isEmailConfirmed) throw new HttpException('Please confirm your email first', HttpStatus.BAD_REQUEST);
     user.password = undefined;
     return user;
   }
@@ -68,7 +52,7 @@ export class AuthService {
     const expiresIn = this.configService.get('JWT_EXPIRATION_TIME');
     const token = this.jwtService.sign(payload, {
       secret: secret,
-      expiresIn: `${expiresIn}s`,
+      expiresIn: `${expiresIn}s`
     });
 
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expiresIn}`;
@@ -76,11 +60,9 @@ export class AuthService {
 
   public async confirmUserEmailWithToken(id: string, token: string) {
     const { emailConfirmationToken } = await this.usersService.getById(id);
-    if (token !== emailConfirmationToken)
-      throw new HttpException(
-        'wrong confirmation token - please contact administrator',
-        HttpStatus.BAD_REQUEST,
-      );
+    if (token !== emailConfirmationToken) {
+      throw new HttpException('wrong confirmation token - please contact administrator', HttpStatus.BAD_REQUEST);
+    }
     await this.usersService.setConfirmUserEmail(id);
     return 'email confirmed successfully';
   }

@@ -15,13 +15,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
   app.use(cookieParser());
   app.enableCors({
     origin: 'http://localhost:3001',
-    credentials: true,
+    credentials: true
   });
   await app.listen(3000);
 }

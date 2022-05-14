@@ -18,5 +18,3 @@ export class CreateUserDto {
   @IsNotEmpty()
   emailConfirmationToken: string;
 }
-
-
