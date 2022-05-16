@@ -3,15 +3,16 @@ import { LinesService } from './lines.service';
 import { CreateLineDto } from './dto/create-line.dto';
 import { UpdateLineDto } from './dto/update-line.dto';
 import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
+import { ResponceLineDto } from './dto/responce-line.dto';
 
 @UseGuards(JwtAuthenticationGuard)
 @Controller('lines')
 export class LinesController {
   constructor(private readonly linesService: LinesService) {}
 
-  @ApiOkResponse()
+  @ApiCreatedResponse({ type: ResponceLineDto })
   @Post('project=:projectId')
   create(@Body() createLineDto: CreateLineDto, @Param('projectId') projectId: string, @Req() request: RequestWithUser) {
     const { user } = request;
