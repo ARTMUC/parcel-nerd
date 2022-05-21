@@ -51,7 +51,7 @@ export class LinesService {
       include: { lineCoords: { select: { x: true, y: true } } }
     });
     if (lines.length < 1) {
-      throw new NotFoundException('Owners not found');
+      throw new NotFoundException('Lines not found');
     }
     return lines;
   }
