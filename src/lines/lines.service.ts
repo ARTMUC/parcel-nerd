@@ -14,9 +14,9 @@ export class LinesService {
   ) {}
 
   create(createLineDto: CreateLineDto, user: User, projectId: string) {
-    const { title, lineCoords } = createLineDto;
+    const { title, lineCoords, system } = createLineDto;
 
-    const convertedLineCoords = this.coordinatesConverterService.convertToDeg(lineCoords, 'EPSG:2177');
+    const convertedLineCoords = this.coordinatesConverterService.convertToDeg(lineCoords, system);
 
     return this.repo.$transaction(async (repo) => {
       const project = await this.projectsService.findOne(projectId, user);
