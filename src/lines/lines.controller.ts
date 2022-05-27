@@ -6,6 +6,7 @@ import RequestWithUser from 'src/auth/interfaces/request-with-user.interface';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guards/jwt-auth.guard';
 import { ResponceLineDto } from './dto/responce-line.dto';
+import { RemoveLineResponseDto } from './dto/remove-line-response.dto';
 
 @UseGuards(JwtAuthenticationGuard)
 @Controller('lines')
@@ -19,6 +20,7 @@ export class LinesController {
     return this.linesService.create(createLineDto, user, projectId);
   }
 
+  @ApiOkResponse({ type: [ResponceLineDto] })
   @Get('project=:projectId')
   findAll(@Req() request: RequestWithUser, @Param('projectId') projectId: string) {
     const { user } = request;
@@ -37,6 +39,7 @@ export class LinesController {
     return this.linesService.update(id, user, updateLineDto);
   }
 
+  @ApiOkResponse({ type: RemoveLineResponseDto })
   @Delete(':id')
   remove(@Param('id') id: string, @Req() request: RequestWithUser) {
     const { user } = request;

@@ -129,13 +129,13 @@ export class LinesService {
         }
       });
 
-      const result = await Promise.all([deleteLine, deleteLineCoords]);
+      const result = await Promise.all([deleteLineCoords, deleteLine]);
 
-      if (result[0].count === 0 || result[1].count === 0) {
+      if (result[0].count === 0 && result[1].count === 0) {
         throw new NotFoundException('Line not found');
       }
 
-      return result;
+      return { success: true };
     });
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { ArrayNotEmpty, IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { CreateLineCoordsDto } from './create-lineCoords.dto';
 
 const systems = [
@@ -25,7 +25,7 @@ export class CreateLineDto {
   title: string;
 
   @ApiProperty({ type: [CreateLineCoordsDto] })
-  @IsNotEmpty()
+  @ArrayNotEmpty()
   lineCoords: CreateLineCoordsDto[];
 
   @ApiProperty()
