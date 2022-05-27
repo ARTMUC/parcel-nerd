@@ -25,7 +25,7 @@ export class CreateLineDto {
   title: string;
 
   @ApiProperty({ type: [CreateLineCoordsDto] })
-  @ArrayNotEmpty()
+  @ArrayNotEmpty({ message: 'Please provide valid line coordinates' })
   lineCoords: CreateLineCoordsDto[];
 
   @ApiProperty()
