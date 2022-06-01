@@ -1,3 +1,5 @@
-export class ConnectProjectDto {
-  id: string;
-}
+
+  export class ConnectProjectDto {
+    id: string;
+  }
+  

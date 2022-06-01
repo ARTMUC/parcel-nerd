@@ -1,3 +1,5 @@
-export class ConnectParcelDto {
-  id: string;
-}
+
+  export class ConnectParcelDto {
+    id: string;
+  }
+  

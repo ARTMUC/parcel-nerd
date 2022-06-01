@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { CreateParcelBoundsDto } from './create-parcelBounds.dto';
+
+export enum StatusName {
+  'Approved',
+  'Rejected',
+  'Warning',
+  'Irrelevant'
+}
 
 export class CreateParcelDto {
   @ApiProperty()
@@ -36,4 +43,8 @@ export class CreateParcelDto {
   @ApiProperty({ type: [CreateParcelBoundsDto] })
   @IsNotEmpty()
   parcelBounds: CreateParcelBoundsDto[];
+
+  @ApiProperty()
+  @IsEnum({ type: StatusName })
+  statusName: StatusName;
 }

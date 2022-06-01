@@ -1,3 +1,5 @@
-export class ConnectLineDto {
-  id: string;
-}
+
+  export class ConnectLineDto {
+    id: string;
+  }
+  

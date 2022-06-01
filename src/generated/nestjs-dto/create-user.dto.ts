@@ -1,6 +1,12 @@
+
+
+
+
+
+
 export class CreateUserDto {
   email: string;
-  name: string;
-  password: string;
-  emailConfirmationToken: string;
+name: string;
+password: string;
+emailConfirmationToken: string;
 }

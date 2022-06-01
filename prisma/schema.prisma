@@ -75,6 +75,7 @@ model Parcel {
   projectId    String?
   user         User?          @relation(fields: [userId], references: [id])
   userId       String?
+  statusName   Int
 }
 
 model ParcelBounds {

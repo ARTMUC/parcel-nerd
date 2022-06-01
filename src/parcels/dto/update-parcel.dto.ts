@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { StatusName } from './create-parcel.dto';
 
 export class UpdateParcelDto {
   @ApiProperty()
@@ -9,4 +10,8 @@ export class UpdateParcelDto {
   @ApiProperty()
   @IsString()
   class?: string;
+
+  @ApiProperty()
+  @IsEnum({ type: StatusName })
+  statusName: StatusName;
 }

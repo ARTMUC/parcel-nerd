@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { CreateParcelByXYDto } from './dto/create-parcelByXY.dto.';
 import { FetchedParcelData } from './interfaces/fetched-parcel-data.interface';
 import { FetchedParcelBounds } from './interfaces/fetched-parcel-bounds.interface';
+import { StatusName } from './dto/create-parcel.dto';
 
 @Injectable()
 export class ParcelDataGetterService {
@@ -51,7 +52,8 @@ export class ParcelDataGetterService {
       voivodeship,
       county,
       commune,
-      parcelBounds
+      parcelBounds,
+      statusName: StatusName.Irrelevant
     } as FetchedParcelData;
   }
 }

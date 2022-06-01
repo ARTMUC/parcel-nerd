@@ -14,7 +14,7 @@ export class ParcelsService {
   ) {}
 
   async createByXY(projectId: string, user: User, createParcelByXYDto: CreateParcelByXYDto): Promise<Parcel> {
-    const { parcelNumber, voivodeship, county, commune, parcelBounds } =
+    const { parcelNumber, voivodeship, county, commune, parcelBounds, statusName } =
       await this.parcelDataGetterService.fetchParcelDataByXY(createParcelByXYDto);
 
     return this.repo.$transaction(async (repo) => {
@@ -30,6 +30,7 @@ export class ParcelsService {
           voivodeship,
           county,
           commune,
+          statusName,
           project: {
             connect: { id: projectId }
           },
@@ -46,7 +47,7 @@ export class ParcelsService {
   }
 
   async createByParcelNumber(projectId: string, user: User, parcelNo: string): Promise<Parcel> {
-    const { parcelNumber, voivodeship, county, commune, parcelBounds } =
+    const { parcelNumber, voivodeship, county, commune, parcelBounds, statusName } =
       await this.parcelDataGetterService.fetchParcelDataByParcelNumber(parcelNo);
 
     return this.repo.$transaction(async (repo) => {
@@ -62,6 +63,7 @@ export class ParcelsService {
           voivodeship,
           county,
           commune,
+          statusName,
           project: {
             connect: { id: projectId }
           },
