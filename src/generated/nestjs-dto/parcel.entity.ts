@@ -19,5 +19,5 @@ project?: ProjectEntity  | null;
 projectId: string  | null;
 user?: UserEntity  | null;
 userId: string  | null;
-statusName: number ;
+statusName: string ;
 }

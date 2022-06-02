@@ -3,10 +3,11 @@ import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { CreateParcelBoundsDto } from './create-parcelBounds.dto';
 
 export enum StatusName {
-  'Approved',
-  'Rejected',
-  'Warning',
-  'Irrelevant'
+  'APPROVED' = 'Approved',
+  'REJECTED' = 'Rejected',
+  'WARNING' = 'Warning',
+  'OPEN' = 'Open',
+  'IRRELEVANT' = 'Irrelevant'
 }
 
 export class CreateParcelDto {

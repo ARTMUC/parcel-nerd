@@ -11,5 +11,5 @@ county?: string;
 commune?: string;
 KW?: string;
 class?: string;
-statusName?: number;
+statusName?: string;
 }

@@ -45,7 +45,7 @@ CREATE TABLE "Parcel" (
     "class" TEXT,
     "projectId" TEXT,
     "userId" TEXT,
-    "status" INTEGER NOT NULL,
+    "statusName" TEXT NOT NULL,
     CONSTRAINT "Parcel_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Parcel_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );

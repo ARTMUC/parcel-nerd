@@ -53,7 +53,7 @@ export class ParcelDataGetterService {
       county,
       commune,
       parcelBounds,
-      statusName: StatusName.Irrelevant
+      statusName: StatusName.OPEN
     } as FetchedParcelData;
   }
 }
