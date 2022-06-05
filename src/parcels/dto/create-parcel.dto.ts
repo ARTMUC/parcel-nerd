@@ -46,6 +46,6 @@ export class CreateParcelDto {
   parcelBounds: CreateParcelBoundsDto[];
 
   @ApiProperty()
-  @IsEnum({ type: StatusName })
+  @IsEnum(StatusName)
   statusName: StatusName;
 }
